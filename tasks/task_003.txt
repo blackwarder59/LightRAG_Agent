@@ -1,0 +1,386 @@
+# Task ID: 3
+# Title: LightRAG Core Integration
+# Status: done
+# Dependencies: 2
+# Priority: high
+# Description: Integrate the LightRAG library from HKUDS/LightRAG repository and set up core functionality for knowledge graph construction and retrieval, following patterns from the ottomator-agents light-rag-agent example.
+# Details:
+Import and configure the LightRAG library following the official HKUDS/LightRAG repository patterns and ottomator-agents example. Create utility functions for entity extraction and relationship mapping according to the LightRAG API. Set up connection to the graph database (Neo4j or similar) and implement vector storage with proper embedding integration. Implement the graph-based retrieval mechanism as shown in the repositories. Create a service layer that abstracts LightRAG operations for the rest of the application, ensuring compatibility with the web UI architecture from the YouTube tutorial.
+
+# Test Strategy:
+Test with sample text to verify entities are extracted correctly and relationships are mapped. Verify retrieval returns relevant context. Ensure compatibility with the web UI by testing integration points.
+
+# Subtasks:
+## 1. LightRAG Library Installation and Configuration [done]
+### Dependencies: None
+### Description: Install the LightRAG library and set up basic configuration for the application
+### Details:
+Implementation steps:
+1. Add LightRAG to project dependencies following HKUDS/LightRAG repository
+2. Create a configuration file (lightrag_config.js/ts) with initial settings based on ottomator-agents example
+3. Set up environment variables for API keys and endpoints following the example patterns
+4. Create initialization function that loads configuration
+5. Implement configuration validation
+6. Add logging for successful initialization
+
+Testing approach:
+- Verify library imports correctly
+- Test configuration loading with different environment settings
+- Validate error handling for missing configurations
+
+<info added on 2025-05-24T10:52:43.211Z>
+## LightRAG Integration Details
+
+### Installation
+```bash
+pip install lightrag-hku>=1.3.7
+pip install python-docx PyPDF2 pdfplumber
+```
+
+### Configuration Structure
+```python
+# lightrag_config.py
+LIGHTRAG_CONFIG = {
+    "embedding": {
+        "model": "text-embedding-3-small",
+        "dimensions": 1536,
+        "batch_size": 32
+    },
+    "llm": {
+        "provider": "openai",
+        "model": "gpt-4o-mini",
+        "temperature": 0.1,
+        "max_tokens": 1024
+    },
+    "storage": {
+        "primary": "chroma",  # Options: "neo4j", "chroma", "redis"
+        "fallback": "memory",
+        "connection_params": {
+            "chroma": {"persist_directory": "./chroma_db"},
+            "neo4j": {
+                "uri": os.getenv("NEO4J_URI", "bolt://localhost:7687"),
+                "user": os.getenv("NEO4J_USER", "neo4j"),
+                "password": os.getenv("NEO4J_PASSWORD", "password")
+            }
+        }
+    },
+    "processing": {
+        "chunk_size": 512,
+        "chunk_overlap": 128,
+        "max_documents_per_query": 5
+    }
+}
+```
+
+### Initialization Function
+```python
+def initialize_lightrag():
+    """Initialize LightRAG with configuration and validate setup"""
+    try:
+        # Load environment variables
+        load_dotenv()
+        
+        # Validate required API keys
+        if not os.getenv("OPENAI_API_KEY"):
+            raise ValueError("OPENAI_API_KEY environment variable is required")
+            
+        # Initialize LightRAG client
+        client = LightRAG(config=LIGHTRAG_CONFIG)
+        
+        # Test connection to storage backend
+        storage_status = client.test_storage_connection()
+        if not storage_status.success:
+            logger.warning(f"Storage connection issue: {storage_status.message}")
+            logger.info("Falling back to memory storage")
+        else:
+            logger.info(f"Successfully connected to {LIGHTRAG_CONFIG['storage']['primary']} storage")
+            
+        return client
+    except Exception as e:
+        logger.error(f"Failed to initialize LightRAG: {str(e)}")
+        raise
+```
+
+### Environment Variables Setup
+Create a `.env` file with:
+```
+OPENAI_API_KEY=your-openai-key
+NEO4J_URI=bolt://localhost:7687
+NEO4J_USER=neo4j
+NEO4J_PASSWORD=your-password
+REDIS_URL=redis://localhost:6379
+```
+
+### Configuration Validation
+```python
+def validate_lightrag_config(config):
+    """Validate LightRAG configuration for required parameters"""
+    required_sections = ["embedding", "llm", "storage", "processing"]
+    for section in required_sections:
+        if section not in config:
+            raise ValueError(f"Missing required configuration section: {section}")
+    
+    # Validate embedding config
+    if "model" not in config["embedding"]:
+        raise ValueError("Embedding model must be specified")
+    
+    # Validate LLM config
+    if "model" not in config["llm"] or "provider" not in config["llm"]:
+        raise ValueError("LLM model and provider must be specified")
+    
+    # Validate storage config
+    if "primary" not in config["storage"]:
+        raise ValueError("Primary storage backend must be specified")
+    
+    return True
+```
+</info added on 2025-05-24T10:52:43.211Z>
+
+## 2. Entity Extraction Utility Functions [done]
+### Dependencies: 3.1
+### Description: Create utility functions for extracting entities from text content
+### Details:
+Implementation steps:
+1. Create an entity extraction service (EntityExtractor.js/ts) following HKUDS/LightRAG API patterns
+2. Implement text preprocessing functions (cleaning, normalization)
+3. Build entity identification functions using LightRAG's NLP capabilities
+4. Create entity classification function to categorize extracted entities
+5. Implement confidence scoring for extracted entities
+6. Add batch processing capability for multiple documents
+
+Testing approach:
+- Unit test each extraction function with sample texts
+- Test entity classification accuracy
+- Benchmark performance with large text samples
+- Verify proper handling of edge cases (empty text, non-English content)
+
+<info added on 2025-05-24T12:26:50.106Z>
+I'll add technical implementation details for the entity extraction utility functions based on the successful integration with LightRAG:
+
+```
+Implementation enhancements:
+
+- Configure EntityExtractor with configurable timeout parameters (default: 180s) to prevent hanging during processing
+- Implement progressive logging with standardized emoji indicators for each extraction phase
+- Add support for LightRAG's native entity recognition capabilities via its API:
+  ```javascript
+  // Example implementation pattern
+  const extractEntities = async (text, options = {}) => {
+    const startTime = performance.now();
+    logger.info('🔍 Starting entity extraction process');
+    
+    try {
+      // Pre-process text
+      const cleanedText = preprocessText(text);
+      
+      // Use LightRAG's entity extraction capabilities
+      const entities = await lightrag.extractEntities(cleanedText, {
+        timeout: options.timeout || 180000,
+        confidenceThreshold: options.confidenceThreshold || 0.7,
+        batchSize: options.batchSize || 1000
+      });
+      
+      // Post-process and classify entities
+      const classifiedEntities = classifyEntities(entities);
+      
+      logger.info(`✅ Entity extraction completed in ${((performance.now() - startTime)/1000).toFixed(2)}s`);
+      return classifiedEntities;
+    } catch (error) {
+      logger.error(`❌ Entity extraction failed: ${error.message}`);
+      throw new EnhancedError('Entity extraction failed', error, { text: text.substring(0, 100) });
+    }
+  };
+  ```
+
+- Implement entity confidence scoring based on LightRAG's proven metrics
+- Add environment variable configuration for entity extraction parameters
+- Create specialized extractors for different entity types (people, organizations, locations, concepts)
+- Implement batching with progress tracking for large documents
+- Add memory-efficient streaming support for very large text processing
+
+Performance optimization:
+- Cache frequently extracted entities to improve processing speed
+- Implement progressive entity extraction that returns initial results quickly
+```
+</info added on 2025-05-24T12:26:50.106Z>
+
+## 3. Relationship Mapping Implementation [done]
+### Dependencies: 3.2
+### Description: Develop functions to identify and map relationships between extracted entities
+### Details:
+Implementation steps:
+1. Create RelationshipMapper.js/ts module following HKUDS/LightRAG patterns
+2. Implement co-occurrence detection between entities
+3. Add semantic relationship extraction using LightRAG's relationship models
+4. Create relationship scoring and filtering mechanisms
+5. Implement relationship type classification
+6. Build utility to convert relationships to graph-compatible format
+
+Testing approach:
+- Test relationship detection with known entity pairs
+- Verify relationship type classification accuracy
+- Test with complex text containing multiple relationship types
+- Validate relationship scoring mechanism
+
+<info added on 2025-05-24T12:42:44.355Z>
+```javascript
+// Implementation details for RelationshipMapper.js
+
+// Core relationship mapping function following LightRAG patterns
+export async function mapRelationships(entities, textContent) {
+  // Co-occurrence detection with sliding window approach
+  const coOccurrences = detectCoOccurrences(entities, textContent, {
+    windowSize: 150,  // Characters in proximity window
+    threshold: 0.65   // Confidence threshold
+  });
+  
+  // Semantic relationship extraction using LightRAG models
+  const semanticRelationships = await extractSemanticRelationships(coOccurrences, textContent);
+  
+  // Apply relationship scoring and filtering
+  const scoredRelationships = scoreRelationships(semanticRelationships, {
+    minScore: 0.4,
+    contextWeight: 0.6,
+    proximityWeight: 0.4
+  });
+  
+  return classifyRelationshipTypes(scoredRelationships);
+}
+
+// Example relationship type classification implementation
+function classifyRelationshipTypes(relationships) {
+  const relationshipTypes = [
+    { pattern: /(contains|includes|has|consists of)/i, type: 'CONTAINS' },
+    { pattern: /(is part of|belongs to)/i, type: 'PART_OF' },
+    { pattern: /(depends on|requires|needs)/i, type: 'DEPENDS_ON' },
+    { pattern: /(causes|leads to|results in)/i, type: 'CAUSES' },
+    { pattern: /(is related to|associates with)/i, type: 'RELATED_TO' }
+  ];
+  
+  return relationships.map(rel => {
+    const matchedType = relationshipTypes.find(rt => rt.pattern.test(rel.context));
+    return {
+      ...rel,
+      type: matchedType ? matchedType.type : 'RELATED_TO'
+    };
+  });
+}
+
+// Graph format conversion utility
+export function toGraphFormat(relationships) {
+  return relationships.map(rel => ({
+    source: rel.sourceEntity.id,
+    target: rel.targetEntity.id,
+    type: rel.type,
+    weight: rel.score,
+    properties: {
+      context: rel.context,
+      confidence: rel.confidence
+    }
+  }));
+}
+```
+
+Key implementation notes:
+- Use sliding window approach for co-occurrence detection rather than simple sentence boundaries
+- Implement weighted scoring combining semantic similarity and physical proximity
+- Cache relationship detection results to improve performance on large documents
+- Use LightRAG's relationship models with proper async handling
+- Consider batch processing for large entity sets to avoid memory issues
+- Implement fallback relationship classification when confidence is low
+</info added on 2025-05-24T12:42:44.355Z>
+
+## 4. Graph Database Connection Setup [done]
+### Dependencies: 3.1
+### Description: Establish connection to Neo4j or similar graph database and implement basic operations
+### Details:
+Implementation steps:
+1. Create GraphDatabaseConnector.js/ts module following patterns in ottomator-agents example
+2. Implement connection pool management
+3. Create CRUD operations for nodes (entities)
+4. Implement CRUD operations for edges (relationships)
+5. Add transaction support for batch operations
+6. Implement connection error handling and retry logic
+
+Testing approach:
+- Test database connection establishment
+- Verify CRUD operations work correctly
+- Test transaction rollback on errors
+- Benchmark performance of batch operations
+- Validate connection pool behavior under load
+
+## 5. Vector Storage and Embedding Integration [done]
+### Dependencies: 3.1
+### Description: Set up vector storage and embedding integration for semantic search capabilities
+### Details:
+Implementation steps:
+1. Create VectorStorage.js/ts module based on HKUDS/LightRAG patterns
+2. Implement embedding generation using the same models as in the reference repositories
+3. Set up vector database connection (or in-memory storage for development)
+4. Create CRUD operations for vector embeddings
+5. Implement similarity search functionality
+6. Add batch processing for efficient embedding generation
+
+Testing approach:
+- Test embedding generation with sample texts
+- Verify similarity search returns expected results
+- Benchmark vector storage performance
+- Test integration with the graph database components
+
+## 6. Graph-Based Retrieval Mechanism [done]
+### Dependencies: 3.3, 3.4, 3.5
+### Description: Implement the retrieval mechanism to query the knowledge graph
+### Details:
+Implementation steps:
+1. Create GraphRetriever.js/ts module following HKUDS/LightRAG retrieval patterns
+2. Implement query parsing and optimization
+3. Build traversal algorithms for relationship exploration as shown in the reference repositories
+4. Create relevance scoring for retrieved nodes
+5. Implement query result formatting and pagination
+6. Add caching mechanism for frequent queries
+
+Testing approach:
+- Test query execution with various complexity levels
+- Verify traversal algorithms work correctly
+- Test relevance scoring with known datasets
+- Benchmark retrieval performance
+- Validate caching mechanism effectiveness
+
+## 7. LightRAG Service Layer Implementation [done]
+### Dependencies: 3.6
+### Description: Create a service layer that abstracts LightRAG operations for the rest of the application
+### Details:
+Implementation steps:
+1. Create LightRAGService.js/ts as the main interface following patterns from ottomator-agents example
+2. Implement document ingestion workflow (extraction, mapping, storage)
+3. Create query interface with multiple retrieval options
+4. Add knowledge graph management functions (update, merge, prune)
+5. Implement error handling and logging throughout the service
+6. Create usage examples and documentation
+
+Testing approach:
+- Integration tests for full document processing workflow
+- Test query interface with various query types
+- Verify knowledge graph management functions
+- End-to-end tests with sample application usage
+- Performance testing under expected load conditions
+
+## 8. Web UI Compatibility Layer [done]
+### Dependencies: 3.7
+### Description: Ensure compatibility with the web UI architecture shown in the YouTube tutorial
+### Details:
+Implementation steps:
+1. Review the web UI architecture from the YouTube tutorial
+2. Create adapter functions to connect LightRAG service with the UI components
+3. Implement any necessary API endpoints for UI interaction
+4. Ensure proper data formatting for UI consumption
+5. Add error handling specific to UI interactions
+6. Create documentation for UI integration patterns
+
+Testing approach:
+- Test all UI integration points
+- Verify data formatting meets UI requirements
+- Test error handling and user feedback
+- Perform end-to-end testing with the UI components
+- Validate performance under typical user interaction patterns
+

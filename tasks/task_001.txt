@@ -1,0 +1,335 @@
+# Task ID: 1
+# Title: Project Structure and Docker Setup
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: Set up the initial project structure with frontend and backend directories, and configure Docker for development and deployment, following the ottomator-agents light-rag-agent example.
+# Details:
+Create a project structure mirroring the ottomator-agents light-rag-agent example with two main directories: 'frontend' for the React/Next.js app and 'backend' for the FastAPI server implementing LightRAG. Set up a docker-compose.yml file with services for frontend, backend, Neo4j (or similar graph database), and Redis. Configure environment variables for API keys, database connections, and other settings. Create Dockerfiles for both frontend and backend services. Implement word document processing capabilities and a modern chat interface similar to ChatGPT/Claude.
+
+# Test Strategy:
+Verify Docker containers start correctly and services can communicate with each other. Test environment variable configuration. Ensure the LightRAG implementation can process documents and respond to queries through the chat interface.
+
+# Subtasks:
+## 1. Create Basic Project Structure with Frontend and Backend Directories [done]
+### Dependencies: None
+### Description: Set up the initial project structure with separate directories for frontend and backend code, including basic configuration files.
+### Details:
+1. Create the root project directory
+2. Create 'frontend' directory for the React/Next.js application
+3. Initialize Next.js project in the frontend directory using `npx create-next-app@latest`
+4. Create 'backend' directory for the FastAPI server
+5. Initialize Python virtual environment in the backend directory
+6. Create basic requirements.txt with FastAPI and other essential dependencies
+7. Set up .gitignore file at the root level with appropriate entries for both frontend and backend
+8. Create README.md with project overview and setup instructions
+9. Test by ensuring all directories are properly created and initialization commands complete successfully
+
+<info added on 2025-05-24T09:25:48.902Z>
+# Additional Implementation Details
+
+## Frontend Structure
+- Configured Next.js 14 with App Router architecture
+- Set up TypeScript with strict type checking enabled
+- Implemented Tailwind CSS with custom theme configuration
+- Added directory structure:
+  - `app/` - for page routes and layouts
+  - `components/` - for reusable UI components
+  - `lib/` - for utility functions and shared logic
+  - `types/` - for TypeScript type definitions
+  - `public/` - for static assets
+  - `styles/` - for global CSS and Tailwind extensions
+
+## Backend Structure Details
+- Created modular architecture in `app/`:
+  - `routers/` - API endpoint definitions with path operations
+  - `models/` - Pydantic models for request/response validation
+  - `services/` - Business logic implementation
+  - `config/` - Environment and application configuration
+  - `utils/` - Helper functions and utilities
+  - `tests/` - Unit and integration tests
+  - `middleware/` - Request/response middleware components
+
+## Configuration Files
+- Added `pyproject.toml` for modern Python packaging
+- Created `.env.example` template for environment variables
+- Set up `docker-compose.yml` for containerized development
+- Added VSCode configuration in `.vscode/` for consistent developer experience
+- Configured pre-commit hooks for code quality enforcement
+
+## Development Tools
+- Installed development dependencies:
+  - `pytest` for backend testing
+  - `black` and `isort` for code formatting
+  - `flake8` for linting
+  - `mypy` for static type checking
+</info added on 2025-05-24T09:25:48.902Z>
+
+## 2. Configure Backend FastAPI Structure [done]
+### Dependencies: 1.1
+### Description: Set up the FastAPI backend structure with LightRAG implementation, document processing capabilities, and API endpoints.
+### Details:
+1. Create main.py file in the backend directory with a basic FastAPI application
+2. Set up directory structure following the ottomator-agents light-rag-agent example: app/routers, app/models, app/services, app/config
+3. Create config.py for configuration management
+4. Implement basic health check endpoint at /health
+5. Set up CORS middleware to allow frontend connections
+6. Create a basic Dockerfile for the backend service using Python base image
+7. Add proper logging configuration
+8. Implement LightRAG following the HKUDS/LightRAG repository pattern
+9. Add document processing capabilities for Word documents
+10. Create API endpoints for document upload, query processing, and chat interactions
+11. Test by running the FastAPI server locally and verifying the health endpoint works
+
+<info added on 2025-05-24T09:30:51.855Z>
+## Implementation Details for FastAPI Structure
+
+### LightRAG Integration
+- Implemented `app/services/rag_service.py` with LightRAG's core components:
+  - Document chunking with configurable chunk size and overlap
+  - Embedding generation using OpenAI embeddings API
+  - Vector store integration with FAISS for efficient similarity search
+  - Knowledge graph construction with Neo4j for entity relationships
+  - Query routing logic between vector and graph-based retrieval
+
+### Document Processing Pipeline
+- Created `app/services/document_processor.py` with:
+  - Word document parsing using python-docx with metadata extraction
+  - Background task queue using FastAPI BackgroundTasks
+  - Processing status tracking with Redis
+  - Document validation and sanitization
+  - Support for tables, images, and formatting extraction
+
+### API Endpoint Implementation Details
+- `/api/documents/upload`: Multipart file upload with progress tracking
+- `/api/documents/{doc_id}/status`: Websocket endpoint for real-time processing updates
+- `/api/chat/query`: Handles RAG-enhanced queries with citation generation
+- `/api/knowledge/graph`: Returns visualization data for knowledge graph exploration
+
+### Security Considerations
+- Implemented rate limiting for API endpoints
+- Added input validation and sanitization for all endpoints
+- Set up proper authentication middleware structure
+- Configured CORS with specific origin restrictions
+
+### Testing Framework
+- Added pytest configuration with fixtures for database and API testing
+- Created mock services for unit testing RAG components
+- Implemented integration tests for document processing pipeline
+</info added on 2025-05-24T09:30:51.855Z>
+
+## 3. Configure Frontend Next.js Structure [done]
+### Dependencies: 1.1
+### Description: Set up the Next.js frontend structure with modern chat interface and document upload capabilities.
+### Details:
+1. Configure basic Next.js project structure with pages, components, and styles directories
+2. Set up a basic layout component with header and footer
+3. Create a modern chat interface similar to ChatGPT/Claude
+4. Implement document upload functionality with progress indicators
+5. Set up API utility functions to communicate with the backend
+6. Configure environment variables for development
+7. Create a Dockerfile for the frontend service using Node base image
+8. Set up styling with a modern UI framework like Tailwind CSS
+9. Implement responsive design for various screen sizes
+10. Test by running the Next.js development server and verifying the chat interface loads
+
+<info added on 2025-05-24T09:44:32.169Z>
+Here's additional information to add to the subtask:
+
+For the frontend configuration, I recommend:
+
+1. Update API utilities to support the newer GPT-4o-mini model:
+   ```typescript
+   // utils/api.ts
+   export const sendChatRequest = async (messages: Message[], options = {}) => {
+     const modelConfig = {
+       model: process.env.NEXT_PUBLIC_OPENAI_MODEL || 'gpt-4o-mini',
+       temperature: 0.7,
+       ...options
+     };
+     // API call implementation
+   };
+   ```
+
+2. Configure environment variables to support the updated models:
+   ```
+   NEXT_PUBLIC_OPENAI_MODEL=gpt-4o-mini
+   NEXT_PUBLIC_EMBEDDING_MODEL=text-embedding-3-small
+   ```
+
+3. Add a model selector component to allow users to choose between models:
+   ```jsx
+   // components/ModelSelector.tsx
+   const models = [
+     { id: 'gpt-4o-mini', name: 'GPT-4o-mini (Recommended)', costPerToken: '0.00015' },
+     { id: 'gpt-4', name: 'GPT-4 (Legacy)', costPerToken: '0.00300' }
+   ];
+   ```
+
+4. Implement cost estimation display in the UI to show users the savings:
+   ```jsx
+   // components/CostEstimator.tsx
+   const calculateCost = (tokenCount, model) => {
+     const rates = {
+       'gpt-4o-mini': 0.00015,
+       'gpt-4': 0.00300,
+       'text-embedding-3-small': 0.00002,
+       'text-embedding-ada-002': 0.00010
+     };
+     return tokenCount * rates[model];
+   };
+   ```
+
+5. Update document processing workflow to use the new embedding model:
+   ```typescript
+   // utils/documentProcessing.ts
+   export const processDocument = async (file) => {
+     // Configuration for the new embedding model
+     const embeddingConfig = {
+       model: process.env.NEXT_PUBLIC_EMBEDDING_MODEL || 'text-embedding-3-small',
+       dimensions: 1536 // Adjust as needed
+     };
+     // Implementation
+   };
+   ```
+
+6. Add a performance metrics component to showcase the speed improvements:
+   ```jsx
+   // components/PerformanceMetrics.tsx
+   // Display response times, token usage, and cost comparisons
+   ```
+</info added on 2025-05-24T09:44:32.169Z>
+
+## 4. Set Up Docker Compose with All Services [done]
+### Dependencies: 1.2, 1.3
+### Description: Create a docker-compose.yml file that includes all required services: frontend, backend, Neo4j, and Redis.
+### Details:
+1. Create docker-compose.yml in the root directory, referencing the ottomator-agents light-rag-agent example
+2. Configure frontend service using the Dockerfile from subtask 3
+3. Configure backend service using the Dockerfile from subtask 2
+4. Add Neo4j service using the official Neo4j image with appropriate volume mappings
+5. Add Redis service using the official Redis image with appropriate volume mappings
+6. Configure networking between services
+7. Set up appropriate port mappings for development (frontend, backend, Neo4j browser)
+8. Configure healthchecks for each service
+9. Test by running `docker-compose up` and verifying all services start correctly
+
+<info added on 2025-05-24T10:04:37.042Z>
+Here's additional information to add to the Docker Compose setup subtask:
+
+```
+## Implementation Details
+
+### Service Configuration
+- **Neo4j**: Use `neo4j:5.13.0` image with APOC plugins enabled via environment variables:
+  ```yaml
+  NEO4J_PLUGINS: '["apoc"]'
+  NEO4J_AUTH: neo4j/password123
+  NEO4J_dbms_memory_heap_initial__size: 512m
+  NEO4J_dbms_memory_heap_max__size: 1G
+  ```
+
+- **Redis**: Use `redis:7.2-alpine` for smaller image size with persistence:
+  ```yaml
+  command: redis-server --save 60 1 --loglevel warning
+  ```
+
+- **Frontend**: Configure with environment variables for API connection:
+  ```yaml
+  NEXT_PUBLIC_API_URL: http://backend:8000
+  NODE_ENV: development
+  ```
+
+- **Backend**: Set up with proper dependencies:
+  ```yaml
+  REDIS_URL: redis://redis:6379/0
+  NEO4J_URI: bolt://neo4j:7687
+  NEO4J_USERNAME: neo4j
+  NEO4J_PASSWORD: password123
+  ```
+
+### Network Configuration
+```yaml
+networks:
+  app-network:
+    driver: bridge
+```
+
+### Volume Configuration
+```yaml
+volumes:
+  neo4j-data:
+  redis-data:
+```
+
+### Health Check Examples
+```yaml
+healthcheck:
+  test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 40s
+```
+
+### Development Optimizations
+- Create `.dockerignore` files to exclude `node_modules`, `.git`, etc.
+- Use bind mounts for code directories in development:
+  ```yaml
+  volumes:
+    - ./frontend:/app
+    - /app/node_modules
+  ```
+
+### Security Considerations
+- Use non-root users in Dockerfiles:
+  ```dockerfile
+  USER node
+  ```
+- Set resource limits for containers to prevent resource exhaustion
+```
+</info added on 2025-05-24T10:04:37.042Z>
+
+## 5. Configure Environment Variables and Development Setup [done]
+### Dependencies: 1.4
+### Description: Set up environment variables for all services and create a streamlined development environment.
+### Details:
+1. Create .env.example files for both frontend and backend with all required variables
+2. Set up .env files for local development (added to .gitignore)
+3. Configure environment variables for API keys, database connections, Redis connection, and LightRAG settings
+4. Create development scripts in package.json/requirements.txt for easy startup
+5. Document the environment setup process in README.md
+6. Configure Docker environment variable passing in docker-compose.yml
+7. Set up development-specific Docker Compose overrides with docker-compose.override.yml
+8. Create a simple script to initialize the development environment
+9. Test the complete setup by starting all services and verifying they can communicate with each other
+
+## 6. Implement LightRAG Integration [done]
+### Dependencies: 1.2
+### Description: Integrate the LightRAG implementation following the HKUDS/LightRAG repository pattern.
+### Details:
+1. Clone or reference the HKUDS/LightRAG repository
+2. Implement the core LightRAG components in the backend
+3. Set up document processing pipeline for Word documents
+4. Configure vector storage and retrieval mechanisms
+5. Implement query processing logic
+6. Set up caching mechanisms with Redis
+7. Create utility functions for document parsing and text extraction
+8. Implement response generation with appropriate context
+9. Test the LightRAG implementation with sample documents and queries
+
+## 7. Create Modern Chat Interface [done]
+### Dependencies: 1.3
+### Description: Implement a modern chat interface in the frontend similar to ChatGPT/Claude.
+### Details:
+1. Design and implement a chat container component
+2. Create message components for user and system messages
+3. Implement real-time message updates
+4. Add typing indicators and loading states
+5. Implement markdown rendering for responses
+6. Add code highlighting for code snippets in responses
+7. Create input area with submit button and keyboard shortcuts
+8. Implement chat history storage and retrieval
+9. Add clear chat functionality
+10. Test the chat interface with mock data and then with the backend integration
+

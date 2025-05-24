@@ -1,0 +1,11 @@
+# Task ID: 14
+# Title: Knowledge Base UI and Source Attribution
+# Status: pending
+# Dependencies: 9, 12
+# Priority: low
+# Description: Create UI components for knowledge base management and source attribution in responses.
+# Details:
+Implement a knowledge base selector component. Create a UI for viewing and managing knowledge bases. Add source attribution display in chat responses that shows which parts of the knowledge base were used. Implement a simple analytics dashboard for knowledge base statistics. Connect to the knowledge base management API.
+
+# Test Strategy:
+Test knowledge base switching. Verify source attribution is displayed correctly. Check analytics dashboard shows accurate information.

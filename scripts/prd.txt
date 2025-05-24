@@ -1,0 +1,115 @@
+Product Requirements Document: LightRAG Agent with Web UI
+
+## Executive Summary
+Build a LightRAG-based conversational agent with a modern web interface following the proven architecture from the ottomator-agents light-rag-agent example. The system will allow users to upload custom knowledge from Word documents and interact with it through a chat interface similar to the one shown in the referenced YouTube tutorial. Implementation will be based on the HKUDS/LightRAG repository for robust graph-based retrieval capabilities.
+
+## Project Goals
+1. Implement a robust LightRAG system for knowledge graph construction and retrieval
+2. Create a modern, responsive web UI for chat interactions
+3. Enable Word document upload and processing for custom knowledge bases
+4. Provide real-time chat responses with context-aware retrieval
+5. Complete MVP within 4 hours
+
+## Core Features
+
+### 1. LightRAG Integration
+- Implement LightRAG core functionality for knowledge graph construction
+- Support for entity extraction and relationship mapping
+- Efficient graph-based retrieval mechanism
+- Integration with OpenAI/local LLM for embeddings and generation
+- Configurable model selection (GPT-4, GPT-3.5, local models)
+
+### 2. Document Processing
+- Word document (.docx) upload functionality
+- Text extraction and preprocessing
+- Automatic chunking and context segmentation
+- Batch processing for multiple documents
+- Progress tracking during document ingestion
+
+### 3. Web User Interface
+- Modern, responsive chat interface similar to ChatGPT
+- Real-time message streaming
+- Chat history management
+- Document upload drag-and-drop zone
+- Status indicators for processing and retrieval
+- Dark/light theme support
+
+### 4. Backend API
+- RESTful API for frontend communication
+- WebSocket support for real-time chat
+- Document upload and processing endpoints
+- Query processing with LightRAG
+- Session management for multi-user support
+
+### 5. Knowledge Management
+- Persistent storage of knowledge graphs
+- Ability to switch between different knowledge bases
+- Export/import knowledge graph functionality
+- Basic analytics on stored knowledge
+
+## Technical Requirements
+
+### Frontend
+- React/Next.js for modern UI following the web interface pattern from the YouTube tutorial
+- Tailwind CSS for styling with ChatGPT-like design patterns
+- WebSocket client for real-time bidirectional communication
+- File upload component with drag-and-drop and progress tracking
+- Markdown/rich text rendering for responses with syntax highlighting
+- Modern chat interface components (message bubbles, typing indicators, etc.)
+
+### Backend
+- Python FastAPI server following ottomator-agents light-rag-agent pattern
+- LightRAG library integration based on HKUDS/LightRAG repository
+- Document processing with python-docx and text chunking strategies
+- Vector database integration (Neo4j/Chroma) for graph storage
+- Redis for session management and caching
+- WebSocket server for real-time chat communication
+- Environment-based configuration following best practices
+
+### Infrastructure
+- Docker containerization
+- Environment variable configuration
+- Logging and error handling
+- Basic authentication (optional for MVP)
+
+## User Stories
+
+1. As a user, I want to upload my Word documents so that the system can learn from my custom knowledge
+2. As a user, I want to ask questions in natural language and receive accurate answers based on my uploaded content
+3. As a user, I want to see the chat history and continue previous conversations
+4. As a user, I want visual feedback when documents are being processed
+5. As a user, I want to see which parts of my knowledge base were used to generate responses
+
+## MVP Scope (4 hours)
+
+### Must Have
+- Basic LightRAG implementation with document ingestion
+- Simple web UI with chat interface
+- Word document upload and processing
+- Basic query-response functionality
+- Docker setup for easy deployment
+
+### Nice to Have (if time permits)
+- Multiple knowledge base support
+- Export functionality
+- Advanced UI features (themes, animations)
+- User authentication
+
+## Success Criteria
+1. Successfully upload and process Word documents
+2. Ask questions and receive contextually relevant answers
+3. Web UI is responsive and user-friendly
+4. System can handle at least 100 pages of text
+5. Response time under 5 seconds for queries
+
+## Technical Constraints
+- Use existing LightRAG library (no custom graph algorithms)
+- Minimize external dependencies
+- Focus on functionality over aesthetics for MVP
+- Use free tier LLM APIs where possible
+
+## Delivery Timeline (4 hours)
+- Hour 1: Project setup, LightRAG integration, basic backend
+- Hour 2: Document processing, knowledge graph construction
+- Hour 3: Web UI development, chat interface
+- Hour 4: Integration, testing, dockerization, documentation 

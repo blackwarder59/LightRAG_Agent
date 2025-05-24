@@ -1,0 +1,122 @@
+# Task ID: 8
+# Title: Query Processing with Graph-Based Retrieval
+# Status: done
+# Dependencies: 4, 7
+# Priority: high
+# Description: Integrate and extend LightRAG's native query processing capabilities for contextual responses.
+# Details:
+LightRAG already provides most of the required query processing functionality natively, including graph traversal, context retrieval, ranking/filtering, and response generation. The task now focuses on integrating with these existing capabilities, exposing additional query parameters/modes in the API, adding custom query preprocessing if needed, and ensuring proper integration with our application.
+
+# Test Strategy:
+Test the integration with LightRAG's query processing capabilities. Verify that all query modes (local, global, hybrid, mix) work correctly. Ensure proper source attribution and response relevance.
+
+# Subtasks:
+## 1. Implement Query Analysis Service [completed]
+### Dependencies: None
+### Description: Create a service that analyzes user queries to extract key entities, intents, and query parameters for effective graph traversal
+### Details:
+Implementation steps:
+1. Create a QueryAnalyzer class with methods to parse and analyze incoming user questions
+2. Implement entity extraction to identify key concepts in the query
+3. Add intent classification to determine query type (factual, explanatory, comparative)
+4. Develop query parameter extraction for filtering and constraints
+5. Create a structured QueryRepresentation object to pass to the retrieval system
+6. Add unit tests with sample queries to verify correct entity and intent extraction
+7. Test with edge cases like ambiguous queries and multi-intent questions
+
+## 2. Build Graph-Based Context Retrieval Module [completed]
+### Dependencies: 8.1
+### Description: Develop the core retrieval module that traverses the knowledge graph to find relevant nodes and relationships based on the analyzed query
+### Details:
+Implementation steps:
+1. Create a GraphRetriever class that accepts a QueryRepresentation object
+2. Implement graph traversal algorithms (breadth-first, depth-first) to explore related nodes
+3. Add relevance scoring for nodes based on query similarity and relationship strength
+4. Develop methods to extract context from retrieved nodes and their relationships
+5. Implement caching for frequently accessed graph patterns
+6. Create a RetrievalResult class to store retrieved nodes, relationships, and metadata
+7. Write integration tests with a test knowledge graph to verify retrieval accuracy
+8. Benchmark retrieval performance with different graph sizes
+
+## 3. Develop Ranking and Filtering Algorithms [completed]
+### Dependencies: 8.2
+### Description: Create algorithms to rank and filter retrieved context based on relevance, recency, and reliability to provide the most useful information to the LLM
+### Details:
+Implementation steps:
+1. Implement a RankingService class to score and order retrieved context
+2. Create multiple ranking algorithms (TF-IDF, semantic similarity, PageRank-inspired)
+3. Add configurable filtering based on metadata (source quality, timestamp, confidence)
+4. Develop context deduplication to remove redundant information
+5. Implement context truncation to fit within LLM context window limits
+6. Add diversity measures to ensure varied perspectives when appropriate
+7. Create evaluation metrics to measure ranking quality
+8. Test with different query types to ensure ranking adapts appropriately
+
+## 4. Integrate with LLM Service for Response Generation [completed]
+### Dependencies: 8.3
+### Description: Connect the retrieval system with the LLM service to generate coherent responses based on the retrieved and ranked context
+### Details:
+Implementation steps:
+1. Create a ResponseGenerator class that interfaces with the LLM service
+2. Implement prompt engineering to effectively combine user query and retrieved context
+3. Add methods to format context in a way that maximizes LLM comprehension
+4. Develop fallback mechanisms for when retrieved context is insufficient
+5. Implement streaming response capability for real-time feedback
+6. Add response validation to ensure generated content addresses the query
+7. Create integration tests with mock LLM service
+8. Measure response quality and relevance with automated metrics
+
+## 5. Implement Source Attribution Tracking [completed]
+### Dependencies: 8.2, 8.4
+### Description: Add a system to track and attribute which parts of the knowledge base were used in generating responses, providing transparency and verification
+### Details:
+Implementation steps:
+1. Create a SourceTracker class to record which nodes and relationships were used
+2. Implement methods to associate specific response segments with source nodes
+3. Develop a citation format for including sources in responses
+4. Add metadata enrichment for sources (confidence level, timestamp, author)
+5. Create an attribution storage system for audit and verification
+6. Implement an API endpoint to retrieve full source details for any response
+7. Add visualization capabilities for source relationships
+8. Test attribution accuracy by comparing retrieved sources with response content
+
+## 6. Expose Additional Query Parameters and Modes in API [done]
+### Dependencies: 8.1, 8.2, 8.3, 8.4, 8.5
+### Description: Extend the API to expose LightRAG's query modes (local, global, hybrid, mix) and additional parameters for fine-tuning retrieval
+### Details:
+Implementation steps:
+1. Document all available LightRAG query modes and parameters
+2. Create API endpoints that expose these modes and parameters
+3. Implement parameter validation and default values
+4. Add examples and documentation for each query mode
+5. Create integration tests for each query mode
+6. Benchmark performance differences between query modes
+7. Implement client-side helpers for selecting appropriate query modes
+
+## 7. Implement Custom Query Preprocessing [done]
+### Dependencies: 8.1
+### Description: Develop optional custom preprocessing for queries to enhance LightRAG's native capabilities
+### Details:
+Implementation steps:
+1. Analyze current query preprocessing in LightRAG
+2. Identify potential enhancement areas (entity recognition, query expansion, etc.)
+3. Implement custom preprocessors that can be optionally applied
+4. Create a preprocessing pipeline that can be configured
+5. Add A/B testing capability to compare preprocessing approaches
+6. Develop metrics to measure preprocessing effectiveness
+7. Create documentation for custom preprocessing options
+
+## 8. Finalize Integration with Application [done]
+### Dependencies: 8.6, 8.7
+### Description: Ensure seamless integration of LightRAG's query processing with the overall application
+### Details:
+Implementation steps:
+1. Review existing chat interface integration with LightRAG
+2. Ensure all query modes are accessible from the UI
+3. Add appropriate error handling and fallbacks
+4. Implement logging for query performance and results
+5. Create admin tools for monitoring query patterns
+6. Develop user feedback mechanisms for query results
+7. Conduct end-to-end testing with real-world scenarios
+8. Document integration points and configuration options
+

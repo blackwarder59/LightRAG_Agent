@@ -1,0 +1,11 @@
+# Task ID: 15
+# Title: Integration Testing and Documentation
+# Status: pending
+# Dependencies: 5, 8, 11, 12, 13, 14
+# Priority: medium
+# Description: Perform end-to-end testing of the complete system and create documentation.
+# Details:
+Test the complete flow from document upload to chat responses. Create a README with setup instructions and usage examples. Document API endpoints and WebSocket protocol. Add environment variable documentation. Create a simple user guide for the web interface. Finalize Docker configuration for production deployment.
+
+# Test Strategy:
+Perform end-to-end testing with real documents. Verify all features work together correctly. Check documentation accuracy and completeness.

@@ -1,0 +1,33 @@
+# Task ID: 4
+# Title: LLM Integration for Embeddings and Generation
+# Status: done
+# Dependencies: 3
+# Priority: high
+# Description: Integration with OpenAI LLMs for embeddings and text generation is handled through LightRAG.
+# Details:
+LightRAG has been successfully integrated to handle LLM functionality:
+
+- Embeddings are generated using text-embedding-3-small model via LightRAG
+- Text generation uses gpt-4o-mini for responses through LightRAG
+- Basic model configuration is already set up in lightrag_service.py
+
+Future enhancements (not part of current scope):
+1. Expose additional model configuration options to users
+2. Add support for alternative LLM providers beyond the default LightRAG implementation
+
+# Test Strategy:
+Verify that LightRAG correctly generates embeddings for document chunks. Confirm text generation produces coherent responses with provided context. Test that the configuration in lightrag_service.py works as expected.
+
+# Subtasks:
+## 4.1. Document LightRAG LLM integration [done]
+### Dependencies: None
+### Description: Create documentation explaining how LightRAG handles embeddings and text generation in our system
+### Details:
+
+
+## 4.2. Review lightrag_service.py configuration [done]
+### Dependencies: None
+### Description: Review the existing LLM configuration in lightrag_service.py to ensure it meets our requirements
+### Details:
+
+

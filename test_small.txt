@@ -1,0 +1,1 @@
+This is a small test document about artificial intelligence and machine learning. AI systems can process natural language and generate responses. Machine learning algorithms learn from data to make predictions.

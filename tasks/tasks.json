@@ -1,0 +1,844 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "title": "Project Structure and Docker Setup",
+      "description": "Set up the initial project structure with frontend and backend directories, and configure Docker for development and deployment, following the ottomator-agents light-rag-agent example.",
+      "status": "done",
+      "dependencies": [],
+      "priority": "high",
+      "details": "Create a project structure mirroring the ottomator-agents light-rag-agent example with two main directories: 'frontend' for the React/Next.js app and 'backend' for the FastAPI server implementing LightRAG. Set up a docker-compose.yml file with services for frontend, backend, Neo4j (or similar graph database), and Redis. Configure environment variables for API keys, database connections, and other settings. Create Dockerfiles for both frontend and backend services. Implement word document processing capabilities and a modern chat interface similar to ChatGPT/Claude.",
+      "testStrategy": "Verify Docker containers start correctly and services can communicate with each other. Test environment variable configuration. Ensure the LightRAG implementation can process documents and respond to queries through the chat interface.",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Basic Project Structure with Frontend and Backend Directories",
+          "description": "Set up the initial project structure with separate directories for frontend and backend code, including basic configuration files.",
+          "dependencies": [],
+          "details": "1. Create the root project directory\n2. Create 'frontend' directory for the React/Next.js application\n3. Initialize Next.js project in the frontend directory using `npx create-next-app@latest`\n4. Create 'backend' directory for the FastAPI server\n5. Initialize Python virtual environment in the backend directory\n6. Create basic requirements.txt with FastAPI and other essential dependencies\n7. Set up .gitignore file at the root level with appropriate entries for both frontend and backend\n8. Create README.md with project overview and setup instructions\n9. Test by ensuring all directories are properly created and initialization commands complete successfully\n\n<info added on 2025-05-24T09:25:48.902Z>\n# Additional Implementation Details\n\n## Frontend Structure\n- Configured Next.js 14 with App Router architecture\n- Set up TypeScript with strict type checking enabled\n- Implemented Tailwind CSS with custom theme configuration\n- Added directory structure:\n  - `app/` - for page routes and layouts\n  - `components/` - for reusable UI components\n  - `lib/` - for utility functions and shared logic\n  - `types/` - for TypeScript type definitions\n  - `public/` - for static assets\n  - `styles/` - for global CSS and Tailwind extensions\n\n## Backend Structure Details\n- Created modular architecture in `app/`:\n  - `routers/` - API endpoint definitions with path operations\n  - `models/` - Pydantic models for request/response validation\n  - `services/` - Business logic implementation\n  - `config/` - Environment and application configuration\n  - `utils/` - Helper functions and utilities\n  - `tests/` - Unit and integration tests\n  - `middleware/` - Request/response middleware components\n\n## Configuration Files\n- Added `pyproject.toml` for modern Python packaging\n- Created `.env.example` template for environment variables\n- Set up `docker-compose.yml` for containerized development\n- Added VSCode configuration in `.vscode/` for consistent developer experience\n- Configured pre-commit hooks for code quality enforcement\n\n## Development Tools\n- Installed development dependencies:\n  - `pytest` for backend testing\n  - `black` and `isort` for code formatting\n  - `flake8` for linting\n  - `mypy` for static type checking\n</info added on 2025-05-24T09:25:48.902Z>",
+          "status": "done",
+          "parentTaskId": 1
+        },
+        {
+          "id": 2,
+          "title": "Configure Backend FastAPI Structure",
+          "description": "Set up the FastAPI backend structure with LightRAG implementation, document processing capabilities, and API endpoints.",
+          "dependencies": [
+            1
+          ],
+          "details": "1. Create main.py file in the backend directory with a basic FastAPI application\n2. Set up directory structure following the ottomator-agents light-rag-agent example: app/routers, app/models, app/services, app/config\n3. Create config.py for configuration management\n4. Implement basic health check endpoint at /health\n5. Set up CORS middleware to allow frontend connections\n6. Create a basic Dockerfile for the backend service using Python base image\n7. Add proper logging configuration\n8. Implement LightRAG following the HKUDS/LightRAG repository pattern\n9. Add document processing capabilities for Word documents\n10. Create API endpoints for document upload, query processing, and chat interactions\n11. Test by running the FastAPI server locally and verifying the health endpoint works\n\n<info added on 2025-05-24T09:30:51.855Z>\n## Implementation Details for FastAPI Structure\n\n### LightRAG Integration\n- Implemented `app/services/rag_service.py` with LightRAG's core components:\n  - Document chunking with configurable chunk size and overlap\n  - Embedding generation using OpenAI embeddings API\n  - Vector store integration with FAISS for efficient similarity search\n  - Knowledge graph construction with Neo4j for entity relationships\n  - Query routing logic between vector and graph-based retrieval\n\n### Document Processing Pipeline\n- Created `app/services/document_processor.py` with:\n  - Word document parsing using python-docx with metadata extraction\n  - Background task queue using FastAPI BackgroundTasks\n  - Processing status tracking with Redis\n  - Document validation and sanitization\n  - Support for tables, images, and formatting extraction\n\n### API Endpoint Implementation Details\n- `/api/documents/upload`: Multipart file upload with progress tracking\n- `/api/documents/{doc_id}/status`: Websocket endpoint for real-time processing updates\n- `/api/chat/query`: Handles RAG-enhanced queries with citation generation\n- `/api/knowledge/graph`: Returns visualization data for knowledge graph exploration\n\n### Security Considerations\n- Implemented rate limiting for API endpoints\n- Added input validation and sanitization for all endpoints\n- Set up proper authentication middleware structure\n- Configured CORS with specific origin restrictions\n\n### Testing Framework\n- Added pytest configuration with fixtures for database and API testing\n- Created mock services for unit testing RAG components\n- Implemented integration tests for document processing pipeline\n</info added on 2025-05-24T09:30:51.855Z>",
+          "status": "done",
+          "parentTaskId": 1
+        },
+        {
+          "id": 3,
+          "title": "Configure Frontend Next.js Structure",
+          "description": "Set up the Next.js frontend structure with modern chat interface and document upload capabilities.",
+          "dependencies": [
+            1
+          ],
+          "details": "1. Configure basic Next.js project structure with pages, components, and styles directories\n2. Set up a basic layout component with header and footer\n3. Create a modern chat interface similar to ChatGPT/Claude\n4. Implement document upload functionality with progress indicators\n5. Set up API utility functions to communicate with the backend\n6. Configure environment variables for development\n7. Create a Dockerfile for the frontend service using Node base image\n8. Set up styling with a modern UI framework like Tailwind CSS\n9. Implement responsive design for various screen sizes\n10. Test by running the Next.js development server and verifying the chat interface loads\n\n<info added on 2025-05-24T09:44:32.169Z>\nHere's additional information to add to the subtask:\n\nFor the frontend configuration, I recommend:\n\n1. Update API utilities to support the newer GPT-4o-mini model:\n   ```typescript\n   // utils/api.ts\n   export const sendChatRequest = async (messages: Message[], options = {}) => {\n     const modelConfig = {\n       model: process.env.NEXT_PUBLIC_OPENAI_MODEL || 'gpt-4o-mini',\n       temperature: 0.7,\n       ...options\n     };\n     // API call implementation\n   };\n   ```\n\n2. Configure environment variables to support the updated models:\n   ```\n   NEXT_PUBLIC_OPENAI_MODEL=gpt-4o-mini\n   NEXT_PUBLIC_EMBEDDING_MODEL=text-embedding-3-small\n   ```\n\n3. Add a model selector component to allow users to choose between models:\n   ```jsx\n   // components/ModelSelector.tsx\n   const models = [\n     { id: 'gpt-4o-mini', name: 'GPT-4o-mini (Recommended)', costPerToken: '0.00015' },\n     { id: 'gpt-4', name: 'GPT-4 (Legacy)', costPerToken: '0.00300' }\n   ];\n   ```\n\n4. Implement cost estimation display in the UI to show users the savings:\n   ```jsx\n   // components/CostEstimator.tsx\n   const calculateCost = (tokenCount, model) => {\n     const rates = {\n       'gpt-4o-mini': 0.00015,\n       'gpt-4': 0.00300,\n       'text-embedding-3-small': 0.00002,\n       'text-embedding-ada-002': 0.00010\n     };\n     return tokenCount * rates[model];\n   };\n   ```\n\n5. Update document processing workflow to use the new embedding model:\n   ```typescript\n   // utils/documentProcessing.ts\n   export const processDocument = async (file) => {\n     // Configuration for the new embedding model\n     const embeddingConfig = {\n       model: process.env.NEXT_PUBLIC_EMBEDDING_MODEL || 'text-embedding-3-small',\n       dimensions: 1536 // Adjust as needed\n     };\n     // Implementation\n   };\n   ```\n\n6. Add a performance metrics component to showcase the speed improvements:\n   ```jsx\n   // components/PerformanceMetrics.tsx\n   // Display response times, token usage, and cost comparisons\n   ```\n</info added on 2025-05-24T09:44:32.169Z>",
+          "status": "done",
+          "parentTaskId": 1
+        },
+        {
+          "id": 4,
+          "title": "Set Up Docker Compose with All Services",
+          "description": "Create a docker-compose.yml file that includes all required services: frontend, backend, Neo4j, and Redis.",
+          "dependencies": [
+            2,
+            3
+          ],
+          "details": "1. Create docker-compose.yml in the root directory, referencing the ottomator-agents light-rag-agent example\n2. Configure frontend service using the Dockerfile from subtask 3\n3. Configure backend service using the Dockerfile from subtask 2\n4. Add Neo4j service using the official Neo4j image with appropriate volume mappings\n5. Add Redis service using the official Redis image with appropriate volume mappings\n6. Configure networking between services\n7. Set up appropriate port mappings for development (frontend, backend, Neo4j browser)\n8. Configure healthchecks for each service\n9. Test by running `docker-compose up` and verifying all services start correctly\n\n<info added on 2025-05-24T10:04:37.042Z>\nHere's additional information to add to the Docker Compose setup subtask:\n\n```\n## Implementation Details\n\n### Service Configuration\n- **Neo4j**: Use `neo4j:5.13.0` image with APOC plugins enabled via environment variables:\n  ```yaml\n  NEO4J_PLUGINS: '[\"apoc\"]'\n  NEO4J_AUTH: neo4j/password123\n  NEO4J_dbms_memory_heap_initial__size: 512m\n  NEO4J_dbms_memory_heap_max__size: 1G\n  ```\n\n- **Redis**: Use `redis:7.2-alpine` for smaller image size with persistence:\n  ```yaml\n  command: redis-server --save 60 1 --loglevel warning\n  ```\n\n- **Frontend**: Configure with environment variables for API connection:\n  ```yaml\n  NEXT_PUBLIC_API_URL: http://backend:8000\n  NODE_ENV: development\n  ```\n\n- **Backend**: Set up with proper dependencies:\n  ```yaml\n  REDIS_URL: redis://redis:6379/0\n  NEO4J_URI: bolt://neo4j:7687\n  NEO4J_USERNAME: neo4j\n  NEO4J_PASSWORD: password123\n  ```\n\n### Network Configuration\n```yaml\nnetworks:\n  app-network:\n    driver: bridge\n```\n\n### Volume Configuration\n```yaml\nvolumes:\n  neo4j-data:\n  redis-data:\n```\n\n### Health Check Examples\n```yaml\nhealthcheck:\n  test: [\"CMD\", \"curl\", \"-f\", \"http://localhost:3000/api/health\"]\n  interval: 30s\n  timeout: 10s\n  retries: 3\n  start_period: 40s\n```\n\n### Development Optimizations\n- Create `.dockerignore` files to exclude `node_modules`, `.git`, etc.\n- Use bind mounts for code directories in development:\n  ```yaml\n  volumes:\n    - ./frontend:/app\n    - /app/node_modules\n  ```\n\n### Security Considerations\n- Use non-root users in Dockerfiles:\n  ```dockerfile\n  USER node\n  ```\n- Set resource limits for containers to prevent resource exhaustion\n```\n</info added on 2025-05-24T10:04:37.042Z>",
+          "status": "done",
+          "parentTaskId": 1
+        },
+        {
+          "id": 5,
+          "title": "Configure Environment Variables and Development Setup",
+          "description": "Set up environment variables for all services and create a streamlined development environment.",
+          "dependencies": [
+            4
+          ],
+          "details": "1. Create .env.example files for both frontend and backend with all required variables\n2. Set up .env files for local development (added to .gitignore)\n3. Configure environment variables for API keys, database connections, Redis connection, and LightRAG settings\n4. Create development scripts in package.json/requirements.txt for easy startup\n5. Document the environment setup process in README.md\n6. Configure Docker environment variable passing in docker-compose.yml\n7. Set up development-specific Docker Compose overrides with docker-compose.override.yml\n8. Create a simple script to initialize the development environment\n9. Test the complete setup by starting all services and verifying they can communicate with each other",
+          "status": "done",
+          "parentTaskId": 1
+        },
+        {
+          "id": 6,
+          "title": "Implement LightRAG Integration",
+          "description": "Integrate the LightRAG implementation following the HKUDS/LightRAG repository pattern.",
+          "dependencies": [
+            2
+          ],
+          "details": "1. Clone or reference the HKUDS/LightRAG repository\n2. Implement the core LightRAG components in the backend\n3. Set up document processing pipeline for Word documents\n4. Configure vector storage and retrieval mechanisms\n5. Implement query processing logic\n6. Set up caching mechanisms with Redis\n7. Create utility functions for document parsing and text extraction\n8. Implement response generation with appropriate context\n9. Test the LightRAG implementation with sample documents and queries",
+          "status": "done",
+          "parentTaskId": 1
+        },
+        {
+          "id": 7,
+          "title": "Create Modern Chat Interface",
+          "description": "Implement a modern chat interface in the frontend similar to ChatGPT/Claude.",
+          "dependencies": [
+            3
+          ],
+          "details": "1. Design and implement a chat container component\n2. Create message components for user and system messages\n3. Implement real-time message updates\n4. Add typing indicators and loading states\n5. Implement markdown rendering for responses\n6. Add code highlighting for code snippets in responses\n7. Create input area with submit button and keyboard shortcuts\n8. Implement chat history storage and retrieval\n9. Add clear chat functionality\n10. Test the chat interface with mock data and then with the backend integration",
+          "status": "done",
+          "parentTaskId": 1
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "FastAPI Backend Server Setup",
+      "description": "Create a basic FastAPI server with initial route structure and WebSocket support.",
+      "status": "done",
+      "dependencies": [
+        1
+      ],
+      "priority": "high",
+      "details": "Set up a FastAPI application with CORS middleware, basic error handling, and logging. Create route groups for document processing, chat, and knowledge management. Implement WebSocket endpoint for real-time chat. Configure dependency injection for database connections and LLM clients. Set up Redis connection for session management.",
+      "testStrategy": "Test server startup and basic endpoint health checks. Verify WebSocket connection can be established.",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Basic FastAPI Server Configuration with CORS and Logging",
+          "description": "Set up the foundational FastAPI application with CORS middleware, error handling, and logging configuration",
+          "dependencies": [],
+          "details": "Implementation details:\n1. Create a new FastAPI application instance\n2. Configure CORS middleware with appropriate origins, methods, and headers\n3. Set up application-wide exception handlers for common HTTP errors (404, 500, etc.)\n4. Implement a logging system using Python's logging module with different log levels\n5. Create a basic health check endpoint at '/health'\n6. Organize the project structure with separate directories for routes, models, services, and utilities\n7. Testing approach: Write tests to verify CORS headers, error responses, and logging functionality",
+          "status": "done",
+          "parentTaskId": 2
+        },
+        {
+          "id": 2,
+          "title": "Route Group Structure Implementation",
+          "description": "Create the API route groups for document processing, chat, and knowledge management with basic endpoint structure",
+          "dependencies": [
+            1
+          ],
+          "details": "Implementation details:\n1. Create APIRouter instances for each functional area: document processing, chat, and knowledge management\n2. Define the basic route structure for each group with appropriate path prefixes\n3. Implement skeleton endpoints with proper HTTP methods (GET, POST, PUT, DELETE)\n4. Add request validation using Pydantic models for each endpoint\n5. Include basic response models and status codes\n6. Register all routers with the main FastAPI application\n7. Testing approach: Write tests for route registration, path validation, and basic request/response validation",
+          "status": "done",
+          "parentTaskId": 2
+        },
+        {
+          "id": 3,
+          "title": "WebSocket Endpoint for Real-time Chat",
+          "description": "Implement WebSocket support for real-time chat functionality",
+          "dependencies": [
+            1
+          ],
+          "details": "Implementation details:\n1. Create a WebSocket endpoint at '/ws/chat/{session_id}'\n2. Implement connection handling (accept, disconnect)\n3. Set up message receiving and sending functionality\n4. Add session tracking to manage multiple concurrent connections\n5. Implement basic message validation and error handling\n6. Create a message queue system for handling multiple messages\n7. Add authentication for WebSocket connections\n8. Testing approach: Use WebSocket testing tools to verify connection establishment, message sending/receiving, and proper disconnection handling",
+          "status": "done",
+          "parentTaskId": 2
+        },
+        {
+          "id": 4,
+          "title": "Dependency Injection System Setup",
+          "description": "Configure dependency injection for database connections and LLM clients",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Implementation details:\n1. Create dependency provider functions for database connections\n2. Implement dependency functions for LLM client initialization\n3. Set up connection pooling for database access\n4. Add configuration for different environments (development, testing, production)\n5. Implement graceful connection handling and resource cleanup\n6. Create mock dependencies for testing purposes\n7. Add dependency overrides for different contexts\n8. Testing approach: Write tests to verify dependency injection, connection management, and proper resource cleanup",
+          "status": "done",
+          "parentTaskId": 2
+        },
+        {
+          "id": 5,
+          "title": "Redis Integration for Session Management",
+          "description": "Set up Redis connection and implement session management functionality",
+          "dependencies": [
+            1,
+            4
+          ],
+          "details": "Implementation details:\n1. Add Redis client library and configure connection parameters\n2. Implement session creation, retrieval, and expiration functionality\n3. Create utility functions for session data serialization/deserialization\n4. Set up appropriate TTL (Time To Live) for session data\n5. Implement session cleanup for expired sessions\n6. Create a session middleware for automatic session handling\n7. Add session persistence across application restarts\n8. Testing approach: Use Redis mocking to test session operations, expiration handling, and data persistence",
+          "status": "done",
+          "parentTaskId": 2
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "LightRAG Core Integration",
+      "description": "Integrate the LightRAG library from HKUDS/LightRAG repository and set up core functionality for knowledge graph construction and retrieval, following patterns from the ottomator-agents light-rag-agent example.",
+      "status": "done",
+      "dependencies": [
+        2
+      ],
+      "priority": "high",
+      "details": "Import and configure the LightRAG library following the official HKUDS/LightRAG repository patterns and ottomator-agents example. Create utility functions for entity extraction and relationship mapping according to the LightRAG API. Set up connection to the graph database (Neo4j or similar) and implement vector storage with proper embedding integration. Implement the graph-based retrieval mechanism as shown in the repositories. Create a service layer that abstracts LightRAG operations for the rest of the application, ensuring compatibility with the web UI architecture from the YouTube tutorial.",
+      "testStrategy": "Test with sample text to verify entities are extracted correctly and relationships are mapped. Verify retrieval returns relevant context. Ensure compatibility with the web UI by testing integration points.",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "LightRAG Library Installation and Configuration",
+          "description": "Install the LightRAG library and set up basic configuration for the application",
+          "dependencies": [],
+          "details": "Implementation steps:\n1. Add LightRAG to project dependencies following HKUDS/LightRAG repository\n2. Create a configuration file (lightrag_config.js/ts) with initial settings based on ottomator-agents example\n3. Set up environment variables for API keys and endpoints following the example patterns\n4. Create initialization function that loads configuration\n5. Implement configuration validation\n6. Add logging for successful initialization\n\nTesting approach:\n- Verify library imports correctly\n- Test configuration loading with different environment settings\n- Validate error handling for missing configurations\n\n<info added on 2025-05-24T10:52:43.211Z>\n## LightRAG Integration Details\n\n### Installation\n```bash\npip install lightrag-hku>=1.3.7\npip install python-docx PyPDF2 pdfplumber\n```\n\n### Configuration Structure\n```python\n# lightrag_config.py\nLIGHTRAG_CONFIG = {\n    \"embedding\": {\n        \"model\": \"text-embedding-3-small\",\n        \"dimensions\": 1536,\n        \"batch_size\": 32\n    },\n    \"llm\": {\n        \"provider\": \"openai\",\n        \"model\": \"gpt-4o-mini\",\n        \"temperature\": 0.1,\n        \"max_tokens\": 1024\n    },\n    \"storage\": {\n        \"primary\": \"chroma\",  # Options: \"neo4j\", \"chroma\", \"redis\"\n        \"fallback\": \"memory\",\n        \"connection_params\": {\n            \"chroma\": {\"persist_directory\": \"./chroma_db\"},\n            \"neo4j\": {\n                \"uri\": os.getenv(\"NEO4J_URI\", \"bolt://localhost:7687\"),\n                \"user\": os.getenv(\"NEO4J_USER\", \"neo4j\"),\n                \"password\": os.getenv(\"NEO4J_PASSWORD\", \"password\")\n            }\n        }\n    },\n    \"processing\": {\n        \"chunk_size\": 512,\n        \"chunk_overlap\": 128,\n        \"max_documents_per_query\": 5\n    }\n}\n```\n\n### Initialization Function\n```python\ndef initialize_lightrag():\n    \"\"\"Initialize LightRAG with configuration and validate setup\"\"\"\n    try:\n        # Load environment variables\n        load_dotenv()\n        \n        # Validate required API keys\n        if not os.getenv(\"OPENAI_API_KEY\"):\n            raise ValueError(\"OPENAI_API_KEY environment variable is required\")\n            \n        # Initialize LightRAG client\n        client = LightRAG(config=LIGHTRAG_CONFIG)\n        \n        # Test connection to storage backend\n        storage_status = client.test_storage_connection()\n        if not storage_status.success:\n            logger.warning(f\"Storage connection issue: {storage_status.message}\")\n            logger.info(\"Falling back to memory storage\")\n        else:\n            logger.info(f\"Successfully connected to {LIGHTRAG_CONFIG['storage']['primary']} storage\")\n            \n        return client\n    except Exception as e:\n        logger.error(f\"Failed to initialize LightRAG: {str(e)}\")\n        raise\n```\n\n### Environment Variables Setup\nCreate a `.env` file with:\n```\nOPENAI_API_KEY=your-openai-key\nNEO4J_URI=bolt://localhost:7687\nNEO4J_USER=neo4j\nNEO4J_PASSWORD=your-password\nREDIS_URL=redis://localhost:6379\n```\n\n### Configuration Validation\n```python\ndef validate_lightrag_config(config):\n    \"\"\"Validate LightRAG configuration for required parameters\"\"\"\n    required_sections = [\"embedding\", \"llm\", \"storage\", \"processing\"]\n    for section in required_sections:\n        if section not in config:\n            raise ValueError(f\"Missing required configuration section: {section}\")\n    \n    # Validate embedding config\n    if \"model\" not in config[\"embedding\"]:\n        raise ValueError(\"Embedding model must be specified\")\n    \n    # Validate LLM config\n    if \"model\" not in config[\"llm\"] or \"provider\" not in config[\"llm\"]:\n        raise ValueError(\"LLM model and provider must be specified\")\n    \n    # Validate storage config\n    if \"primary\" not in config[\"storage\"]:\n        raise ValueError(\"Primary storage backend must be specified\")\n    \n    return True\n```\n</info added on 2025-05-24T10:52:43.211Z>",
+          "status": "done",
+          "parentTaskId": 3
+        },
+        {
+          "id": 2,
+          "title": "Entity Extraction Utility Functions",
+          "description": "Create utility functions for extracting entities from text content",
+          "dependencies": [
+            1
+          ],
+          "details": "Implementation steps:\n1. Create an entity extraction service (EntityExtractor.js/ts) following HKUDS/LightRAG API patterns\n2. Implement text preprocessing functions (cleaning, normalization)\n3. Build entity identification functions using LightRAG's NLP capabilities\n4. Create entity classification function to categorize extracted entities\n5. Implement confidence scoring for extracted entities\n6. Add batch processing capability for multiple documents\n\nTesting approach:\n- Unit test each extraction function with sample texts\n- Test entity classification accuracy\n- Benchmark performance with large text samples\n- Verify proper handling of edge cases (empty text, non-English content)\n\n<info added on 2025-05-24T12:26:50.106Z>\nI'll add technical implementation details for the entity extraction utility functions based on the successful integration with LightRAG:\n\n```\nImplementation enhancements:\n\n- Configure EntityExtractor with configurable timeout parameters (default: 180s) to prevent hanging during processing\n- Implement progressive logging with standardized emoji indicators for each extraction phase\n- Add support for LightRAG's native entity recognition capabilities via its API:\n  ```javascript\n  // Example implementation pattern\n  const extractEntities = async (text, options = {}) => {\n    const startTime = performance.now();\n    logger.info('🔍 Starting entity extraction process');\n    \n    try {\n      // Pre-process text\n      const cleanedText = preprocessText(text);\n      \n      // Use LightRAG's entity extraction capabilities\n      const entities = await lightrag.extractEntities(cleanedText, {\n        timeout: options.timeout || 180000,\n        confidenceThreshold: options.confidenceThreshold || 0.7,\n        batchSize: options.batchSize || 1000\n      });\n      \n      // Post-process and classify entities\n      const classifiedEntities = classifyEntities(entities);\n      \n      logger.info(`✅ Entity extraction completed in ${((performance.now() - startTime)/1000).toFixed(2)}s`);\n      return classifiedEntities;\n    } catch (error) {\n      logger.error(`❌ Entity extraction failed: ${error.message}`);\n      throw new EnhancedError('Entity extraction failed', error, { text: text.substring(0, 100) });\n    }\n  };\n  ```\n\n- Implement entity confidence scoring based on LightRAG's proven metrics\n- Add environment variable configuration for entity extraction parameters\n- Create specialized extractors for different entity types (people, organizations, locations, concepts)\n- Implement batching with progress tracking for large documents\n- Add memory-efficient streaming support for very large text processing\n\nPerformance optimization:\n- Cache frequently extracted entities to improve processing speed\n- Implement progressive entity extraction that returns initial results quickly\n```\n</info added on 2025-05-24T12:26:50.106Z>",
+          "status": "done",
+          "parentTaskId": 3
+        },
+        {
+          "id": 3,
+          "title": "Relationship Mapping Implementation",
+          "description": "Develop functions to identify and map relationships between extracted entities",
+          "dependencies": [
+            2
+          ],
+          "details": "Implementation steps:\n1. Create RelationshipMapper.js/ts module following HKUDS/LightRAG patterns\n2. Implement co-occurrence detection between entities\n3. Add semantic relationship extraction using LightRAG's relationship models\n4. Create relationship scoring and filtering mechanisms\n5. Implement relationship type classification\n6. Build utility to convert relationships to graph-compatible format\n\nTesting approach:\n- Test relationship detection with known entity pairs\n- Verify relationship type classification accuracy\n- Test with complex text containing multiple relationship types\n- Validate relationship scoring mechanism\n\n<info added on 2025-05-24T12:42:44.355Z>\n```javascript\n// Implementation details for RelationshipMapper.js\n\n// Core relationship mapping function following LightRAG patterns\nexport async function mapRelationships(entities, textContent) {\n  // Co-occurrence detection with sliding window approach\n  const coOccurrences = detectCoOccurrences(entities, textContent, {\n    windowSize: 150,  // Characters in proximity window\n    threshold: 0.65   // Confidence threshold\n  });\n  \n  // Semantic relationship extraction using LightRAG models\n  const semanticRelationships = await extractSemanticRelationships(coOccurrences, textContent);\n  \n  // Apply relationship scoring and filtering\n  const scoredRelationships = scoreRelationships(semanticRelationships, {\n    minScore: 0.4,\n    contextWeight: 0.6,\n    proximityWeight: 0.4\n  });\n  \n  return classifyRelationshipTypes(scoredRelationships);\n}\n\n// Example relationship type classification implementation\nfunction classifyRelationshipTypes(relationships) {\n  const relationshipTypes = [\n    { pattern: /(contains|includes|has|consists of)/i, type: 'CONTAINS' },\n    { pattern: /(is part of|belongs to)/i, type: 'PART_OF' },\n    { pattern: /(depends on|requires|needs)/i, type: 'DEPENDS_ON' },\n    { pattern: /(causes|leads to|results in)/i, type: 'CAUSES' },\n    { pattern: /(is related to|associates with)/i, type: 'RELATED_TO' }\n  ];\n  \n  return relationships.map(rel => {\n    const matchedType = relationshipTypes.find(rt => rt.pattern.test(rel.context));\n    return {\n      ...rel,\n      type: matchedType ? matchedType.type : 'RELATED_TO'\n    };\n  });\n}\n\n// Graph format conversion utility\nexport function toGraphFormat(relationships) {\n  return relationships.map(rel => ({\n    source: rel.sourceEntity.id,\n    target: rel.targetEntity.id,\n    type: rel.type,\n    weight: rel.score,\n    properties: {\n      context: rel.context,\n      confidence: rel.confidence\n    }\n  }));\n}\n```\n\nKey implementation notes:\n- Use sliding window approach for co-occurrence detection rather than simple sentence boundaries\n- Implement weighted scoring combining semantic similarity and physical proximity\n- Cache relationship detection results to improve performance on large documents\n- Use LightRAG's relationship models with proper async handling\n- Consider batch processing for large entity sets to avoid memory issues\n- Implement fallback relationship classification when confidence is low\n</info added on 2025-05-24T12:42:44.355Z>",
+          "status": "done",
+          "parentTaskId": 3
+        },
+        {
+          "id": 4,
+          "title": "Graph Database Connection Setup",
+          "description": "Establish connection to Neo4j or similar graph database and implement basic operations",
+          "dependencies": [
+            1
+          ],
+          "details": "Implementation steps:\n1. Create GraphDatabaseConnector.js/ts module following patterns in ottomator-agents example\n2. Implement connection pool management\n3. Create CRUD operations for nodes (entities)\n4. Implement CRUD operations for edges (relationships)\n5. Add transaction support for batch operations\n6. Implement connection error handling and retry logic\n\nTesting approach:\n- Test database connection establishment\n- Verify CRUD operations work correctly\n- Test transaction rollback on errors\n- Benchmark performance of batch operations\n- Validate connection pool behavior under load",
+          "status": "done",
+          "parentTaskId": 3
+        },
+        {
+          "id": 5,
+          "title": "Vector Storage and Embedding Integration",
+          "description": "Set up vector storage and embedding integration for semantic search capabilities",
+          "dependencies": [
+            1
+          ],
+          "details": "Implementation steps:\n1. Create VectorStorage.js/ts module based on HKUDS/LightRAG patterns\n2. Implement embedding generation using the same models as in the reference repositories\n3. Set up vector database connection (or in-memory storage for development)\n4. Create CRUD operations for vector embeddings\n5. Implement similarity search functionality\n6. Add batch processing for efficient embedding generation\n\nTesting approach:\n- Test embedding generation with sample texts\n- Verify similarity search returns expected results\n- Benchmark vector storage performance\n- Test integration with the graph database components",
+          "status": "done",
+          "parentTaskId": 3
+        },
+        {
+          "id": 6,
+          "title": "Graph-Based Retrieval Mechanism",
+          "description": "Implement the retrieval mechanism to query the knowledge graph",
+          "dependencies": [
+            3,
+            4,
+            5
+          ],
+          "details": "Implementation steps:\n1. Create GraphRetriever.js/ts module following HKUDS/LightRAG retrieval patterns\n2. Implement query parsing and optimization\n3. Build traversal algorithms for relationship exploration as shown in the reference repositories\n4. Create relevance scoring for retrieved nodes\n5. Implement query result formatting and pagination\n6. Add caching mechanism for frequent queries\n\nTesting approach:\n- Test query execution with various complexity levels\n- Verify traversal algorithms work correctly\n- Test relevance scoring with known datasets\n- Benchmark retrieval performance\n- Validate caching mechanism effectiveness",
+          "status": "done",
+          "parentTaskId": 3
+        },
+        {
+          "id": 7,
+          "title": "LightRAG Service Layer Implementation",
+          "description": "Create a service layer that abstracts LightRAG operations for the rest of the application",
+          "dependencies": [
+            6
+          ],
+          "details": "Implementation steps:\n1. Create LightRAGService.js/ts as the main interface following patterns from ottomator-agents example\n2. Implement document ingestion workflow (extraction, mapping, storage)\n3. Create query interface with multiple retrieval options\n4. Add knowledge graph management functions (update, merge, prune)\n5. Implement error handling and logging throughout the service\n6. Create usage examples and documentation\n\nTesting approach:\n- Integration tests for full document processing workflow\n- Test query interface with various query types\n- Verify knowledge graph management functions\n- End-to-end tests with sample application usage\n- Performance testing under expected load conditions",
+          "status": "done",
+          "parentTaskId": 3
+        },
+        {
+          "id": 8,
+          "title": "Web UI Compatibility Layer",
+          "description": "Ensure compatibility with the web UI architecture shown in the YouTube tutorial",
+          "dependencies": [
+            7
+          ],
+          "details": "Implementation steps:\n1. Review the web UI architecture from the YouTube tutorial\n2. Create adapter functions to connect LightRAG service with the UI components\n3. Implement any necessary API endpoints for UI interaction\n4. Ensure proper data formatting for UI consumption\n5. Add error handling specific to UI interactions\n6. Create documentation for UI integration patterns\n\nTesting approach:\n- Test all UI integration points\n- Verify data formatting meets UI requirements\n- Test error handling and user feedback\n- Perform end-to-end testing with the UI components\n- Validate performance under typical user interaction patterns",
+          "status": "done",
+          "parentTaskId": 3
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "LLM Integration for Embeddings and Generation",
+      "description": "Integration with OpenAI LLMs for embeddings and text generation is handled through LightRAG.",
+      "status": "done",
+      "dependencies": [
+        3
+      ],
+      "priority": "high",
+      "details": "LightRAG has been successfully integrated to handle LLM functionality:\n\n- Embeddings are generated using text-embedding-3-small model via LightRAG\n- Text generation uses gpt-4o-mini for responses through LightRAG\n- Basic model configuration is already set up in lightrag_service.py\n\nFuture enhancements (not part of current scope):\n1. Expose additional model configuration options to users\n2. Add support for alternative LLM providers beyond the default LightRAG implementation",
+      "testStrategy": "Verify that LightRAG correctly generates embeddings for document chunks. Confirm text generation produces coherent responses with provided context. Test that the configuration in lightrag_service.py works as expected.",
+      "subtasks": [
+        {
+          "id": "4.1",
+          "title": "Document LightRAG LLM integration",
+          "description": "Create documentation explaining how LightRAG handles embeddings and text generation in our system",
+          "status": "done"
+        },
+        {
+          "id": "4.2",
+          "title": "Review lightrag_service.py configuration",
+          "description": "Review the existing LLM configuration in lightrag_service.py to ensure it meets our requirements",
+          "status": "done"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Document Upload and Processing API",
+      "description": "Create API endpoints for document upload and processing with progress tracking.",
+      "status": "done",
+      "dependencies": [
+        2,
+        3
+      ],
+      "priority": "high",
+      "details": "Successfully implemented a file upload endpoint at /api/documents/upload that accepts multiple file formats including .docx, .pdf, .txt, and .md files. Created a background task system for processing documents asynchronously with LightRAG integration. Implemented progress tracking and document status updates. Added proper error handling and validation for file uploads. The system supports batch processing for multiple documents and stores upload metadata in the database.",
+      "testStrategy": "Tested file upload with various document sizes and formats (.docx, .pdf, .txt, .md). Verified progress updates are sent correctly. Confirmed error handling works properly for invalid files.",
+      "completionNotes": "All requirements have been successfully implemented including the working /api/documents/upload endpoint, multipart file upload support, background processing with LightRAG integration, progress tracking, error handling, and support for multiple file formats."
+    },
+    {
+      "id": 6,
+      "title": "Word Document Text Extraction",
+      "description": "Implement text extraction and preprocessing from uploaded Word documents.",
+      "status": "done",
+      "dependencies": [
+        5
+      ],
+      "priority": "high",
+      "details": "COMPLETED: Successfully implemented text extraction and preprocessing for multiple document formats in text_extraction_service.py:\n\n- Implemented DOCX text extraction using python-docx\n- Added PDF text extraction using PyPDF2 and pdfplumber\n- Included TXT/MD file extraction with encoding detection\n- Implemented text cleaning and preprocessing pipeline\n- Added robust error handling for various file formats\n- Provided comprehensive file format support beyond the original requirements\n\nThe implementation successfully extracts document structure (headings, paragraphs), handles embedded images and tables, and prepares text for chunking.",
+      "testStrategy": "COMPLETED: Tested with various document formats and structures including DOCX, PDF, TXT, and MD files. Verified all text content is correctly extracted and normalized across different file types. Confirmed proper handling of document structure, embedded elements, and various encodings."
+    },
+    {
+      "id": 7,
+      "title": "Text Chunking and Knowledge Graph Construction",
+      "description": "Implement automatic chunking of document text and construction of the knowledge graph.",
+      "status": "done",
+      "dependencies": [
+        3,
+        6
+      ],
+      "priority": "high",
+      "details": "LightRAG already handles the entire knowledge graph pipeline internally: text chunking with intelligent boundaries, entity and relationship extraction, knowledge graph construction, and database persistence. The lightrag_service.py provides the necessary service layer for knowledge graph operations.",
+      "testStrategy": "Verify LightRAG's built-in functionality for text chunking, entity extraction, relationship mapping, and knowledge graph construction using sample documents. Confirm proper storage and retrieval from nano-vectordb.",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement Text Chunking Algorithm",
+          "description": "Create an algorithm that segments document text into appropriate chunk sizes for processing",
+          "dependencies": [],
+          "details": "COMPLETED: No implementation needed as LightRAG handles text chunking internally with intelligent chunk boundaries. LightRAG automatically segments text with appropriate chunk sizes and handles different document formats.",
+          "status": "completed",
+          "parentTaskId": 7
+        },
+        {
+          "id": 2,
+          "title": "Implement Context Preservation Between Chunks",
+          "description": "Enhance the chunking algorithm to maintain context between adjacent text chunks",
+          "dependencies": [
+            1
+          ],
+          "details": "COMPLETED: No implementation needed as LightRAG's chunking system already preserves context between chunks with appropriate overlap and maintains document structure.",
+          "status": "completed",
+          "parentTaskId": 7
+        },
+        {
+          "id": 3,
+          "title": "Implement Entity Extraction Using LightRAG",
+          "description": "Create a service to extract entities from text chunks using LightRAG",
+          "dependencies": [
+            2
+          ],
+          "details": "COMPLETED: No implementation needed as LightRAG automatically extracts entities from text. Testing confirmed successful extraction of 5 entities in our test document.",
+          "status": "completed",
+          "parentTaskId": 7
+        },
+        {
+          "id": 4,
+          "title": "Implement Relationship Extraction and Mapping",
+          "description": "Create a service to identify relationships between entities using LightRAG",
+          "dependencies": [
+            3
+          ],
+          "details": "COMPLETED: No implementation needed as LightRAG automatically identifies relationships between entities. Testing confirmed successful extraction of 3 relationships in our test document.",
+          "status": "completed",
+          "parentTaskId": 7
+        },
+        {
+          "id": 5,
+          "title": "Implement Knowledge Graph Database Storage",
+          "description": "Create database models and storage mechanisms for the knowledge graph",
+          "dependencies": [
+            3,
+            4
+          ],
+          "details": "COMPLETED: No implementation needed as LightRAG automatically persists the knowledge graph to disk using nano-vectordb and graph files.",
+          "status": "completed",
+          "parentTaskId": 7
+        },
+        {
+          "id": 6,
+          "title": "Create Knowledge Graph Service Layer",
+          "description": "Implement a service layer to manage knowledge graph operations and integrate all components",
+          "dependencies": [
+            5
+          ],
+          "details": "COMPLETED: No implementation needed as the service layer already exists in lightrag_service.py, which provides all necessary functionality for knowledge graph operations.",
+          "status": "completed",
+          "parentTaskId": 7
+        },
+        {
+          "id": 7,
+          "title": "Verify LightRAG Knowledge Graph Functionality",
+          "description": "Test and document LightRAG's built-in knowledge graph capabilities",
+          "dependencies": [],
+          "details": "Document the existing LightRAG knowledge graph functionality: 1) Run comprehensive tests with various document types to verify chunking, entity extraction, and relationship mapping, 2) Create documentation on how to configure and optimize LightRAG's knowledge graph features, 3) Develop examples showing how to query and utilize the knowledge graph in our application, 4) Verify performance and scalability with larger documents.",
+          "status": "done",
+          "parentTaskId": 7
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Query Processing with Graph-Based Retrieval",
+      "description": "Integrate and extend LightRAG's native query processing capabilities for contextual responses.",
+      "status": "done",
+      "dependencies": [
+        4,
+        7
+      ],
+      "priority": "high",
+      "details": "LightRAG already provides most of the required query processing functionality natively, including graph traversal, context retrieval, ranking/filtering, and response generation. The task now focuses on integrating with these existing capabilities, exposing additional query parameters/modes in the API, adding custom query preprocessing if needed, and ensuring proper integration with our application.",
+      "testStrategy": "Test the integration with LightRAG's query processing capabilities. Verify that all query modes (local, global, hybrid, mix) work correctly. Ensure proper source attribution and response relevance.",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement Query Analysis Service",
+          "description": "Create a service that analyzes user queries to extract key entities, intents, and query parameters for effective graph traversal",
+          "dependencies": [],
+          "details": "Implementation steps:\n1. Create a QueryAnalyzer class with methods to parse and analyze incoming user questions\n2. Implement entity extraction to identify key concepts in the query\n3. Add intent classification to determine query type (factual, explanatory, comparative)\n4. Develop query parameter extraction for filtering and constraints\n5. Create a structured QueryRepresentation object to pass to the retrieval system\n6. Add unit tests with sample queries to verify correct entity and intent extraction\n7. Test with edge cases like ambiguous queries and multi-intent questions",
+          "status": "completed",
+          "parentTaskId": 8
+        },
+        {
+          "id": 2,
+          "title": "Build Graph-Based Context Retrieval Module",
+          "description": "Develop the core retrieval module that traverses the knowledge graph to find relevant nodes and relationships based on the analyzed query",
+          "dependencies": [
+            1
+          ],
+          "details": "Implementation steps:\n1. Create a GraphRetriever class that accepts a QueryRepresentation object\n2. Implement graph traversal algorithms (breadth-first, depth-first) to explore related nodes\n3. Add relevance scoring for nodes based on query similarity and relationship strength\n4. Develop methods to extract context from retrieved nodes and their relationships\n5. Implement caching for frequently accessed graph patterns\n6. Create a RetrievalResult class to store retrieved nodes, relationships, and metadata\n7. Write integration tests with a test knowledge graph to verify retrieval accuracy\n8. Benchmark retrieval performance with different graph sizes",
+          "status": "completed",
+          "parentTaskId": 8
+        },
+        {
+          "id": 3,
+          "title": "Develop Ranking and Filtering Algorithms",
+          "description": "Create algorithms to rank and filter retrieved context based on relevance, recency, and reliability to provide the most useful information to the LLM",
+          "dependencies": [
+            2
+          ],
+          "details": "Implementation steps:\n1. Implement a RankingService class to score and order retrieved context\n2. Create multiple ranking algorithms (TF-IDF, semantic similarity, PageRank-inspired)\n3. Add configurable filtering based on metadata (source quality, timestamp, confidence)\n4. Develop context deduplication to remove redundant information\n5. Implement context truncation to fit within LLM context window limits\n6. Add diversity measures to ensure varied perspectives when appropriate\n7. Create evaluation metrics to measure ranking quality\n8. Test with different query types to ensure ranking adapts appropriately",
+          "status": "completed",
+          "parentTaskId": 8
+        },
+        {
+          "id": 4,
+          "title": "Integrate with LLM Service for Response Generation",
+          "description": "Connect the retrieval system with the LLM service to generate coherent responses based on the retrieved and ranked context",
+          "dependencies": [
+            3
+          ],
+          "details": "Implementation steps:\n1. Create a ResponseGenerator class that interfaces with the LLM service\n2. Implement prompt engineering to effectively combine user query and retrieved context\n3. Add methods to format context in a way that maximizes LLM comprehension\n4. Develop fallback mechanisms for when retrieved context is insufficient\n5. Implement streaming response capability for real-time feedback\n6. Add response validation to ensure generated content addresses the query\n7. Create integration tests with mock LLM service\n8. Measure response quality and relevance with automated metrics",
+          "status": "completed",
+          "parentTaskId": 8
+        },
+        {
+          "id": 5,
+          "title": "Implement Source Attribution Tracking",
+          "description": "Add a system to track and attribute which parts of the knowledge base were used in generating responses, providing transparency and verification",
+          "dependencies": [
+            2,
+            4
+          ],
+          "details": "Implementation steps:\n1. Create a SourceTracker class to record which nodes and relationships were used\n2. Implement methods to associate specific response segments with source nodes\n3. Develop a citation format for including sources in responses\n4. Add metadata enrichment for sources (confidence level, timestamp, author)\n5. Create an attribution storage system for audit and verification\n6. Implement an API endpoint to retrieve full source details for any response\n7. Add visualization capabilities for source relationships\n8. Test attribution accuracy by comparing retrieved sources with response content",
+          "status": "completed",
+          "parentTaskId": 8
+        },
+        {
+          "id": 6,
+          "title": "Expose Additional Query Parameters and Modes in API",
+          "description": "Extend the API to expose LightRAG's query modes (local, global, hybrid, mix) and additional parameters for fine-tuning retrieval",
+          "dependencies": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "details": "Implementation steps:\n1. Document all available LightRAG query modes and parameters\n2. Create API endpoints that expose these modes and parameters\n3. Implement parameter validation and default values\n4. Add examples and documentation for each query mode\n5. Create integration tests for each query mode\n6. Benchmark performance differences between query modes\n7. Implement client-side helpers for selecting appropriate query modes",
+          "status": "done",
+          "parentTaskId": 8
+        },
+        {
+          "id": 7,
+          "title": "Implement Custom Query Preprocessing",
+          "description": "Develop optional custom preprocessing for queries to enhance LightRAG's native capabilities",
+          "dependencies": [
+            1
+          ],
+          "details": "Implementation steps:\n1. Analyze current query preprocessing in LightRAG\n2. Identify potential enhancement areas (entity recognition, query expansion, etc.)\n3. Implement custom preprocessors that can be optionally applied\n4. Create a preprocessing pipeline that can be configured\n5. Add A/B testing capability to compare preprocessing approaches\n6. Develop metrics to measure preprocessing effectiveness\n7. Create documentation for custom preprocessing options",
+          "status": "done",
+          "parentTaskId": 8
+        },
+        {
+          "id": 8,
+          "title": "Finalize Integration with Application",
+          "description": "Ensure seamless integration of LightRAG's query processing with the overall application",
+          "dependencies": [
+            6,
+            7
+          ],
+          "details": "Implementation steps:\n1. Review existing chat interface integration with LightRAG\n2. Ensure all query modes are accessible from the UI\n3. Add appropriate error handling and fallbacks\n4. Implement logging for query performance and results\n5. Create admin tools for monitoring query patterns\n6. Develop user feedback mechanisms for query results\n7. Conduct end-to-end testing with real-world scenarios\n8. Document integration points and configuration options",
+          "status": "done",
+          "parentTaskId": 8
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Knowledge Base Management API",
+      "description": "Create API endpoints for managing multiple knowledge bases through LightRAG's directory-based approach.",
+      "status": "pending",
+      "dependencies": [
+        7
+      ],
+      "priority": "medium",
+      "details": "Implement a simplified approach leveraging LightRAG's directory-based knowledge base management:\n\n1. Create endpoints for working directory management to switch between LightRAG working directories\n2. Implement knowledge base metadata storage (names, descriptions, creation dates)\n3. Ensure proper directory isolation with separate lightrag_data folders for each knowledge base\n4. Expose basic statistics by leveraging LightRAG's built-in graph stats\n5. Implement import/export functionality using LightRAG's file persistence (directory content copying)\n\nKey endpoints to implement:\n- POST /api/knowledge-bases (create new KB)\n- GET /api/knowledge-bases (list all KBs)\n- PUT /api/knowledge-bases/{id}/activate (switch active KB)\n- GET /api/knowledge-bases/{id}/stats (graph statistics)",
+      "testStrategy": "Test knowledge base creation and listing functionality. Verify switching between knowledge bases works correctly by confirming the active directory changes. Test that each knowledge base maintains proper isolation. Verify statistics endpoints return accurate data from LightRAG. Test import/export by copying directory contents and ensuring all data is preserved."
+    },
+    {
+      "id": 10,
+      "title": "React/Next.js Frontend Setup",
+      "description": "Set up the frontend project with React/Next.js and Tailwind CSS to create a ChatGPT-like interface for the LightRAG system.",
+      "status": "pending",
+      "dependencies": [
+        1
+      ],
+      "priority": "high",
+      "details": "Enhance the existing Next.js frontend with improved UI/UX features. The basic chat interface, document upload functionality, API integration with backend, and real-time chat communication are already implemented. Focus on enhancing the user experience with better styling, improved file upload capabilities, persistent chat history, better loading states, user-friendly error handling, responsive design, keyboard shortcuts, and message actions. The goal is to polish the functional frontend to make it production-ready with a modern, intuitive interface following the design patterns shown in the YouTube tutorial and ottomator-agents example.",
+      "testStrategy": "Verify enhanced UI components render correctly. Test improved file upload with drag-and-drop and progress tracking. Verify chat history persistence across sessions. Test loading states and error messages for user-friendliness. Ensure responsive design works across all device sizes. Test keyboard shortcuts functionality. Verify message actions like copy and regenerate work correctly.",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Initialize Next.js project with TypeScript",
+          "description": "Set up a new Next.js project with TypeScript support as the foundation for the frontend application.",
+          "dependencies": [],
+          "details": "1. Install Node.js and npm if not already installed.\n2. Create a new Next.js project with TypeScript using `npx create-next-app@latest --typescript`.\n3. Follow the CLI prompts, selecting appropriate options (Yes to ESLint, App Router, etc.).\n4. Verify the project structure and ensure TypeScript is properly configured.\n5. Update tsconfig.json with any additional settings needed.\n6. Run the development server with `npm run dev` to verify the setup.\n7. Test by accessing the default page at localhost:3000.\n8. Commit the initial project setup to version control.",
+          "status": "completed",
+          "parentTaskId": 10
+        },
+        {
+          "id": 2,
+          "title": "Configure Tailwind CSS for styling",
+          "description": "Integrate and configure Tailwind CSS for consistent styling across the application, focusing on modern chat interface design.",
+          "dependencies": [
+            1
+          ],
+          "details": "1. Install Tailwind CSS and its dependencies: `npm install -D tailwindcss postcss autoprefixer`.\n2. Generate Tailwind configuration files: `npx tailwindcss init -p`.\n3. Configure content paths in tailwind.config.js to include all relevant files.\n4. Add the Tailwind directives to the global CSS file.\n5. Create a theme extension in the Tailwind config for chat interface colors and styles.\n6. Define custom utility classes for message bubbles, chat containers, and input areas.\n7. Set up responsive design utilities for different device sizes.\n8. Configure animations for loading states and transitions.\n9. Test responsive design using Tailwind's responsive utilities.\n10. Verify that styles are being properly applied and that the build process works correctly.",
+          "status": "completed",
+          "parentTaskId": 10
+        },
+        {
+          "id": 3,
+          "title": "Set up project structure with components, pages, and services",
+          "description": "Organize the project with a scalable folder structure for components, pages, and services, with specific focus on chat interface components.",
+          "dependencies": [
+            1
+          ],
+          "details": "1. Create a `/components` directory with subdirectories for UI, layout, and feature components.\n2. Add specific chat component directories: `/components/chat` for message bubbles, input area, etc.\n3. Create `/components/upload` for file upload interface components.\n4. Set up a `/lib` or `/utils` directory for utility functions.\n5. Organize the `/app` directory (for App Router) with appropriate route segments.\n6. Create a `/types` directory for TypeScript type definitions including message and file types.\n7. Add a `/hooks` directory for custom React hooks including upload and chat hooks.\n8. Set up a `/constants` directory for application constants.\n9. Create basic layout components (Header, Footer, Layout).\n10. Implement a chat page component following the YouTube tutorial design.\n11. Document the project structure in README.md for team reference.",
+          "status": "completed",
+          "parentTaskId": 10
+        },
+        {
+          "id": 4,
+          "title": "Create API client services for backend communication",
+          "description": "Implement API client services to handle communication with the FastAPI backend, including RESTful API calls and WebSocket connections for real-time chat features.",
+          "dependencies": [
+            3
+          ],
+          "details": "1. Install axios or fetch wrapper: `npm install axios`.\n2. Create a `/services` directory with an API client base class.\n3. Implement environment-based API URL configuration.\n4. Set up request/response interceptors for common handling (auth, errors).\n5. Create service classes for different API endpoints, including chat and file upload endpoints.\n6. Implement WebSocket client using `socket.io-client` or native WebSockets.\n7. Create connection management for WebSockets (connect, disconnect, reconnect).\n8. Add event listeners for WebSocket messages, including typing indicators.\n9. Create a custom hook for WebSocket state and events.\n10. Implement file upload services with progress tracking.\n11. Test API services with mock endpoints or actual backend.\n12. Test WebSocket connection and event handling.",
+          "status": "completed",
+          "parentTaskId": 10
+        },
+        {
+          "id": 10,
+          "title": "Enhance UI Design with Modern Chat Bubbles",
+          "description": "Improve the existing chat interface with better styling and modern chat bubble design.",
+          "dependencies": [
+            2,
+            3
+          ],
+          "details": "1. Redesign message bubbles with more polished styling for both user and assistant messages.\n2. Add subtle animations for message appearance and transitions.\n3. Implement improved typography and spacing for better readability.\n4. Create distinct visual separation between user and assistant messages.\n5. Add avatar support with customizable options.\n6. Implement message grouping for consecutive messages from the same sender.\n7. Add timestamp displays with appropriate formatting.\n8. Ensure consistent styling across the entire chat interface.\n9. Test the enhanced UI across different browsers and screen sizes.\n10. Gather feedback on the new design and make iterative improvements.",
+          "status": "pending",
+          "parentTaskId": 10
+        },
+        {
+          "id": 11,
+          "title": "Improve File Upload Interface",
+          "description": "Enhance the existing file upload functionality with drag-and-drop, progress indicators, and batch upload capabilities.",
+          "dependencies": [
+            4
+          ],
+          "details": "1. Add drag-and-drop zone with visual feedback for drag events.\n2. Implement file upload progress tracking with animated progress bars.\n3. Add support for batch file uploads with individual progress tracking.\n4. Create preview thumbnails for uploaded files when applicable.\n5. Implement file type validation with user-friendly error messages.\n6. Add file size restrictions with appropriate warnings.\n7. Create a file management interface for uploaded documents.\n8. Implement file removal functionality.\n9. Add animations for upload states (uploading, success, error).\n10. Test with various file types, sizes, and quantities.\n11. Ensure the interface works well on both desktop and mobile devices.",
+          "status": "pending",
+          "parentTaskId": 10
+        },
+        {
+          "id": 12,
+          "title": "Implement Persistent Chat History",
+          "description": "Add functionality to store and retrieve conversation history across sessions.",
+          "dependencies": [
+            4
+          ],
+          "details": "1. Design a data structure for storing chat history.\n2. Implement local storage solution for persisting conversations.\n3. Create API endpoints for server-side history storage if needed.\n4. Add conversation management features (start new, continue existing).\n5. Implement conversation naming and organization.\n6. Create UI for browsing and selecting previous conversations.\n7. Add search functionality for finding specific conversations or messages.\n8. Implement conversation export functionality.\n9. Add conversation deletion with confirmation.\n10. Test persistence across page refreshes and browser sessions.\n11. Ensure proper handling of large conversation histories.",
+          "status": "pending",
+          "parentTaskId": 10
+        },
+        {
+          "id": 13,
+          "title": "Enhance Loading States and Feedback",
+          "description": "Improve user feedback during processing with better loading states and indicators.",
+          "dependencies": [
+            10
+          ],
+          "details": "1. Design and implement improved typing indicators with natural animation.\n2. Create skeleton loaders for chat history loading.\n3. Add subtle animations for message sending and receiving states.\n4. Implement progress indicators for long-running operations.\n5. Create toast notifications for important events.\n6. Add visual feedback for user actions (message sent, file uploaded).\n7. Implement transition animations between different application states.\n8. Create loading overlays for full-page operations when necessary.\n9. Add estimated time indicators for longer processes.\n10. Test all loading states and transitions for smoothness and user clarity.\n11. Ensure loading indicators are accessible with appropriate ARIA attributes.",
+          "status": "pending",
+          "parentTaskId": 10
+        },
+        {
+          "id": 14,
+          "title": "Implement User-Friendly Error Handling",
+          "description": "Create a comprehensive error handling system with user-friendly error messages.",
+          "dependencies": [
+            4
+          ],
+          "details": "1. Design a consistent error message format and styling.\n2. Implement error boundary components to catch and display React errors.\n3. Create custom error components for different error types (network, validation, etc.).\n4. Add retry functionality for failed operations.\n5. Implement offline detection and appropriate messaging.\n6. Create contextual error messages that suggest next steps.\n7. Add error logging for debugging purposes.\n8. Implement form validation with inline error messages.\n9. Create fallback UI components for when primary components fail.\n10. Test error handling with various error scenarios.\n11. Ensure error messages are accessible and properly announced to screen readers.",
+          "status": "pending",
+          "parentTaskId": 10
+        },
+        {
+          "id": 15,
+          "title": "Improve Responsive Design",
+          "description": "Enhance the mobile experience with a fully responsive, mobile-friendly interface.",
+          "dependencies": [
+            10,
+            11
+          ],
+          "details": "1. Audit current responsive behavior and identify improvement areas.\n2. Implement mobile-first design principles for all components.\n3. Create adaptive layouts for different screen sizes.\n4. Optimize touch targets for mobile users.\n5. Implement mobile-specific navigation patterns.\n6. Add swipe gestures for common actions where appropriate.\n7. Optimize file upload interface for mobile devices.\n8. Ensure proper virtual keyboard handling.\n9. Test on various mobile devices and screen sizes.\n10. Implement device-specific optimizations (iOS vs Android).\n11. Ensure consistent performance across all device types.",
+          "status": "pending",
+          "parentTaskId": 10
+        },
+        {
+          "id": 16,
+          "title": "Add Keyboard Shortcuts",
+          "description": "Implement keyboard shortcuts for common actions to improve user efficiency.",
+          "dependencies": [
+            3
+          ],
+          "details": "1. Implement Enter key to send messages (with modifier key for new line).\n2. Add Escape key functionality to cancel current operation.\n3. Create keyboard navigation for conversation history.\n4. Implement shortcut for starting a new conversation.\n5. Add keyboard accessibility for file upload (space/enter to open file dialog).\n6. Create a keyboard shortcut help modal.\n7. Implement copy shortcuts for message content.\n8. Add keyboard focus management for improved accessibility.\n9. Create custom key bindings for power users.\n10. Test keyboard shortcuts across different browsers and operating systems.\n11. Ensure shortcuts don't conflict with browser or system shortcuts.",
+          "status": "pending",
+          "parentTaskId": 10
+        },
+        {
+          "id": 17,
+          "title": "Implement Message Actions",
+          "description": "Add functionality for message-specific actions like copy, regenerate responses, etc.",
+          "dependencies": [
+            10
+          ],
+          "details": "1. Design and implement a message action menu UI.\n2. Add copy to clipboard functionality for message content.\n3. Implement regenerate response action for assistant messages.\n4. Add message editing capability for user messages.\n5. Implement message deletion with confirmation.\n6. Add code block actions (copy code, syntax highlighting).\n7. Create share message functionality.\n8. Implement message reaction/feedback options.\n9. Add message threading or reply functionality if applicable.\n10. Test all message actions for proper functionality.\n11. Ensure actions are accessible via keyboard and screen readers.",
+          "status": "pending",
+          "parentTaskId": 10
+        },
+        {
+          "id": 18,
+          "title": "Implement Dark/Light Theme Support",
+          "description": "Add theme switching functionality with dark and light modes using React Context API.",
+          "dependencies": [
+            2,
+            10
+          ],
+          "details": "1. Create a ThemeContext using React's Context API.\n2. Implement a ThemeProvider component that manages theme state.\n3. Add theme toggle functionality with smooth transitions.\n4. Configure Tailwind's dark mode using the 'class' strategy.\n5. Create theme-specific color variables for all UI elements.\n6. Implement local storage persistence for user theme preference.\n7. Add system preference detection for initial theme.\n8. Create a custom useTheme hook for components to access theme state.\n9. Update all components to respect theme settings.\n10. Test theme switching functionality across all components.\n11. Verify that theme persists across page refreshes.",
+          "status": "pending",
+          "parentTaskId": 10
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "title": "Document Upload UI Component",
+      "description": "Create a drag-and-drop document upload component with progress tracking.",
+      "status": "pending",
+      "dependencies": [
+        10
+      ],
+      "priority": "medium",
+      "details": "Enhance the existing basic file upload with a polished user experience. Implement a visually appealing drag-and-drop zone with hover effects. Create real-time progress indicators for upload and processing. Add batch upload support for multiple files simultaneously. Implement comprehensive file validation with visual feedback for file type/size errors. Create an upload queue to display multiple files being processed. Add file preview functionality to show file information before upload. Implement cancel and retry options for failed uploads. Connect to the existing document upload API endpoint.",
+      "testStrategy": "Test drag-and-drop functionality with various file types and sizes. Verify real-time progress tracking works correctly. Test batch upload with multiple files. Validate error messages and visual feedback for invalid files. Test cancel and retry functionality for uploads. Verify file preview information is accurate. Test the complete upload queue workflow with multiple files in different states.",
+      "subtasks": [
+        {
+          "id": 11.1,
+          "title": "Implement Drag & Drop Zone",
+          "description": "Create a visually appealing drop area with hover effects and visual feedback",
+          "status": "pending"
+        },
+        {
+          "id": 11.2,
+          "title": "Add Real-time Progress Tracking",
+          "description": "Implement progress bars that accurately show upload status in real-time",
+          "status": "pending"
+        },
+        {
+          "id": 11.3,
+          "title": "Enable Batch Upload",
+          "description": "Allow users to upload multiple files simultaneously with individual tracking",
+          "status": "pending"
+        },
+        {
+          "id": 11.4,
+          "title": "Implement File Validation",
+          "description": "Add comprehensive file type and size validation with clear visual feedback",
+          "status": "pending"
+        },
+        {
+          "id": 11.5,
+          "title": "Create Upload Queue UI",
+          "description": "Design and implement a queue showing multiple files being processed",
+          "status": "pending"
+        },
+        {
+          "id": 11.6,
+          "title": "Add File Preview",
+          "description": "Show file information and preview before upload is initiated",
+          "status": "pending"
+        },
+        {
+          "id": 11.7,
+          "title": "Implement Cancel/Retry Options",
+          "description": "Allow users to cancel ongoing uploads or retry failed ones",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "title": "Chat Interface Implementation",
+      "description": "Build a modern, responsive chat interface with message history and real-time updates.",
+      "status": "pending",
+      "dependencies": [
+        10
+      ],
+      "priority": "high",
+      "details": "Create a chat UI similar to ChatGPT with message bubbles. Implement chat history display and scrolling. Add user input component with submit handling. Create typing indicators and loading states. Implement markdown rendering for responses. Add auto-scrolling to new messages. Connect to WebSocket for real-time updates.",
+      "testStrategy": "Test chat UI responsiveness on different screen sizes. Verify markdown rendering works correctly. Check real-time updates via WebSocket."
+    },
+    {
+      "id": 13,
+      "title": "Real-time Message Streaming",
+      "description": "Implement streaming of AI responses in real-time as they are generated.",
+      "status": "pending",
+      "dependencies": [
+        8,
+        12
+      ],
+      "priority": "medium",
+      "details": "Modify the backend to stream LightRAG responses as they are generated, improving perceived response time and user experience. Update the existing WebSocket implementation to handle streaming messages. Create a frontend component that displays streaming text with appropriate typing animations to create a more engaging chat experience. Implement cancel functionality to allow users to interrupt long responses. Add error handling for interrupted streams. This enhancement builds on top of the working LightRAG integration which currently returns complete responses.",
+      "testStrategy": "Test streaming with various response lengths to ensure consistent performance. Verify text appears incrementally in real-time with natural typing animations. Test the cancel functionality to ensure long responses can be interrupted. Check error recovery if connection is interrupted. Compare user experience with streaming vs. non-streaming responses.",
+      "subtasks": [
+        {
+          "id": "13.1",
+          "description": "Modify LightRAG response handling in the backend to stream tokens as they're generated",
+          "status": "pending"
+        },
+        {
+          "id": "13.2",
+          "description": "Update existing WebSocket connection to support streaming message chunks",
+          "status": "pending"
+        },
+        {
+          "id": "13.3",
+          "description": "Implement frontend component to display text incrementally as it arrives",
+          "status": "pending"
+        },
+        {
+          "id": "13.4",
+          "description": "Add realistic typing animation effect to streamed responses",
+          "status": "pending"
+        },
+        {
+          "id": "13.5",
+          "description": "Implement cancel functionality to allow interrupting long responses",
+          "status": "pending"
+        },
+        {
+          "id": "13.6",
+          "description": "Add error handling for interrupted streams and connection issues",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "title": "Knowledge Base UI and Source Attribution",
+      "description": "Create UI components for knowledge base management and source attribution in responses.",
+      "status": "pending",
+      "dependencies": [
+        9,
+        12
+      ],
+      "priority": "low",
+      "details": "Implement a knowledge base selector component. Create a UI for viewing and managing knowledge bases. Add source attribution display in chat responses that shows which parts of the knowledge base were used. Implement a simple analytics dashboard for knowledge base statistics. Connect to the knowledge base management API.",
+      "testStrategy": "Test knowledge base switching. Verify source attribution is displayed correctly. Check analytics dashboard shows accurate information."
+    },
+    {
+      "id": 15,
+      "title": "Integration Testing and Documentation",
+      "description": "Perform end-to-end testing of the complete system and create documentation.",
+      "status": "pending",
+      "dependencies": [
+        5,
+        8,
+        11,
+        12,
+        13,
+        14
+      ],
+      "priority": "medium",
+      "details": "Test the complete flow from document upload to chat responses. Create a README with setup instructions and usage examples. Document API endpoints and WebSocket protocol. Add environment variable documentation. Create a simple user guide for the web interface. Finalize Docker configuration for production deployment.",
+      "testStrategy": "Perform end-to-end testing with real documents. Verify all features work together correctly. Check documentation accuracy and completeness."
+    },
+    {
+      "id": 16,
+      "title": "Implement Comprehensive UI Design System for LightRAG Agent",
+      "description": "Create and implement a cohesive design system for the LightRAG Agent that enhances visual appeal and user experience while maintaining functionality.",
+      "details": "This task involves creating a comprehensive design system for the LightRAG Agent interface once core functionality is stable. The developer should:\n\n1. Create a consistent color palette with primary, secondary, and accent colors that follow accessibility guidelines (minimum contrast ratio of 4.5:1)\n2. Implement a typography system with appropriate font families, sizes, and weights for different UI elements (headings, body text, buttons, etc.)\n3. Establish consistent spacing using a grid system or spacing scale (8px increments recommended)\n4. Design and implement subtle animations for state changes, transitions between views, and user interactions (loading states, hover effects, etc.)\n5. Enhance component styling for all UI elements including:\n   - Input fields and search bars\n   - Buttons and action items\n   - Results display area\n   - Navigation elements\n   - Modal dialogs and notifications\n6. Implement responsive design principles to ensure the interface works well across different screen sizes\n7. Create visual hierarchy through effective use of whitespace, color, and typography\n8. Add subtle visual feedback for user actions (hover states, active states, etc.)\n9. Ensure all UI elements maintain a consistent visual language\n10. Document the design system components for future reference and consistency\n\nThe implementation should use CSS variables or a styling framework like Tailwind CSS for maintainability. All styling changes should enhance but not interfere with the existing functionality.",
+      "testStrategy": "Testing should verify both the visual implementation and user experience improvements:\n\n1. Visual Regression Testing:\n   - Capture screenshots of the interface before and after implementation\n   - Compare key UI components to ensure consistent styling\n   - Verify across multiple viewport sizes (mobile, tablet, desktop)\n\n2. Accessibility Testing:\n   - Use tools like Lighthouse or axe to verify color contrast meets WCAG 2.1 AA standards\n   - Test keyboard navigation flows remain functional\n   - Verify screen reader compatibility for critical elements\n\n3. Cross-browser Testing:\n   - Verify consistent appearance in Chrome, Firefox, Safari, and Edge\n   - Check that animations and transitions work properly across browsers\n\n4. User Experience Validation:\n   - Conduct a small user test with 3-5 users to gather feedback on the new design\n   - Create a checklist of specific UI improvements and verify each is implemented\n   - Time key user flows to ensure design changes don't negatively impact performance\n\n5. Performance Testing:\n   - Measure load times before and after to ensure design enhancements don't significantly increase page weight\n   - Check for animation performance issues, especially on lower-end devices\n\nAll tests should be documented with screenshots and notes for future reference.",
+      "status": "pending",
+      "dependencies": [
+        3,
+        7,
+        8
+      ],
+      "priority": "low"
+    }
+  ],
+  "metadata": {
+    "projectName": "LightRAG Agent with Web UI",
+    "totalTasks": 15,
+    "sourceFile": "/Users/iyarbinyamin/Desktop/AIbots/LightRAG_Agent/scripts/prd.txt",
+    "generatedAt": "2023-11-15"
+  }
+}

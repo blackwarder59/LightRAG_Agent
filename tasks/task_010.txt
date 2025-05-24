@@ -1,0 +1,217 @@
+# Task ID: 10
+# Title: React/Next.js Frontend Setup
+# Status: pending
+# Dependencies: 1
+# Priority: high
+# Description: Set up the frontend project with React/Next.js and Tailwind CSS to create a ChatGPT-like interface for the LightRAG system.
+# Details:
+Enhance the existing Next.js frontend with improved UI/UX features. The basic chat interface, document upload functionality, API integration with backend, and real-time chat communication are already implemented. Focus on enhancing the user experience with better styling, improved file upload capabilities, persistent chat history, better loading states, user-friendly error handling, responsive design, keyboard shortcuts, and message actions. The goal is to polish the functional frontend to make it production-ready with a modern, intuitive interface following the design patterns shown in the YouTube tutorial and ottomator-agents example.
+
+# Test Strategy:
+Verify enhanced UI components render correctly. Test improved file upload with drag-and-drop and progress tracking. Verify chat history persistence across sessions. Test loading states and error messages for user-friendliness. Ensure responsive design works across all device sizes. Test keyboard shortcuts functionality. Verify message actions like copy and regenerate work correctly.
+
+# Subtasks:
+## 1. Initialize Next.js project with TypeScript [completed]
+### Dependencies: None
+### Description: Set up a new Next.js project with TypeScript support as the foundation for the frontend application.
+### Details:
+1. Install Node.js and npm if not already installed.
+2. Create a new Next.js project with TypeScript using `npx create-next-app@latest --typescript`.
+3. Follow the CLI prompts, selecting appropriate options (Yes to ESLint, App Router, etc.).
+4. Verify the project structure and ensure TypeScript is properly configured.
+5. Update tsconfig.json with any additional settings needed.
+6. Run the development server with `npm run dev` to verify the setup.
+7. Test by accessing the default page at localhost:3000.
+8. Commit the initial project setup to version control.
+
+## 2. Configure Tailwind CSS for styling [completed]
+### Dependencies: 10.1
+### Description: Integrate and configure Tailwind CSS for consistent styling across the application, focusing on modern chat interface design.
+### Details:
+1. Install Tailwind CSS and its dependencies: `npm install -D tailwindcss postcss autoprefixer`.
+2. Generate Tailwind configuration files: `npx tailwindcss init -p`.
+3. Configure content paths in tailwind.config.js to include all relevant files.
+4. Add the Tailwind directives to the global CSS file.
+5. Create a theme extension in the Tailwind config for chat interface colors and styles.
+6. Define custom utility classes for message bubbles, chat containers, and input areas.
+7. Set up responsive design utilities for different device sizes.
+8. Configure animations for loading states and transitions.
+9. Test responsive design using Tailwind's responsive utilities.
+10. Verify that styles are being properly applied and that the build process works correctly.
+
+## 3. Set up project structure with components, pages, and services [completed]
+### Dependencies: 10.1
+### Description: Organize the project with a scalable folder structure for components, pages, and services, with specific focus on chat interface components.
+### Details:
+1. Create a `/components` directory with subdirectories for UI, layout, and feature components.
+2. Add specific chat component directories: `/components/chat` for message bubbles, input area, etc.
+3. Create `/components/upload` for file upload interface components.
+4. Set up a `/lib` or `/utils` directory for utility functions.
+5. Organize the `/app` directory (for App Router) with appropriate route segments.
+6. Create a `/types` directory for TypeScript type definitions including message and file types.
+7. Add a `/hooks` directory for custom React hooks including upload and chat hooks.
+8. Set up a `/constants` directory for application constants.
+9. Create basic layout components (Header, Footer, Layout).
+10. Implement a chat page component following the YouTube tutorial design.
+11. Document the project structure in README.md for team reference.
+
+## 4. Create API client services for backend communication [completed]
+### Dependencies: 10.3
+### Description: Implement API client services to handle communication with the FastAPI backend, including RESTful API calls and WebSocket connections for real-time chat features.
+### Details:
+1. Install axios or fetch wrapper: `npm install axios`.
+2. Create a `/services` directory with an API client base class.
+3. Implement environment-based API URL configuration.
+4. Set up request/response interceptors for common handling (auth, errors).
+5. Create service classes for different API endpoints, including chat and file upload endpoints.
+6. Implement WebSocket client using `socket.io-client` or native WebSockets.
+7. Create connection management for WebSockets (connect, disconnect, reconnect).
+8. Add event listeners for WebSocket messages, including typing indicators.
+9. Create a custom hook for WebSocket state and events.
+10. Implement file upload services with progress tracking.
+11. Test API services with mock endpoints or actual backend.
+12. Test WebSocket connection and event handling.
+
+## 10. Enhance UI Design with Modern Chat Bubbles [pending]
+### Dependencies: 10.2, 10.3
+### Description: Improve the existing chat interface with better styling and modern chat bubble design.
+### Details:
+1. Redesign message bubbles with more polished styling for both user and assistant messages.
+2. Add subtle animations for message appearance and transitions.
+3. Implement improved typography and spacing for better readability.
+4. Create distinct visual separation between user and assistant messages.
+5. Add avatar support with customizable options.
+6. Implement message grouping for consecutive messages from the same sender.
+7. Add timestamp displays with appropriate formatting.
+8. Ensure consistent styling across the entire chat interface.
+9. Test the enhanced UI across different browsers and screen sizes.
+10. Gather feedback on the new design and make iterative improvements.
+
+## 11. Improve File Upload Interface [pending]
+### Dependencies: 10.4
+### Description: Enhance the existing file upload functionality with drag-and-drop, progress indicators, and batch upload capabilities.
+### Details:
+1. Add drag-and-drop zone with visual feedback for drag events.
+2. Implement file upload progress tracking with animated progress bars.
+3. Add support for batch file uploads with individual progress tracking.
+4. Create preview thumbnails for uploaded files when applicable.
+5. Implement file type validation with user-friendly error messages.
+6. Add file size restrictions with appropriate warnings.
+7. Create a file management interface for uploaded documents.
+8. Implement file removal functionality.
+9. Add animations for upload states (uploading, success, error).
+10. Test with various file types, sizes, and quantities.
+11. Ensure the interface works well on both desktop and mobile devices.
+
+## 12. Implement Persistent Chat History [pending]
+### Dependencies: 10.4
+### Description: Add functionality to store and retrieve conversation history across sessions.
+### Details:
+1. Design a data structure for storing chat history.
+2. Implement local storage solution for persisting conversations.
+3. Create API endpoints for server-side history storage if needed.
+4. Add conversation management features (start new, continue existing).
+5. Implement conversation naming and organization.
+6. Create UI for browsing and selecting previous conversations.
+7. Add search functionality for finding specific conversations or messages.
+8. Implement conversation export functionality.
+9. Add conversation deletion with confirmation.
+10. Test persistence across page refreshes and browser sessions.
+11. Ensure proper handling of large conversation histories.
+
+## 13. Enhance Loading States and Feedback [pending]
+### Dependencies: 10.10
+### Description: Improve user feedback during processing with better loading states and indicators.
+### Details:
+1. Design and implement improved typing indicators with natural animation.
+2. Create skeleton loaders for chat history loading.
+3. Add subtle animations for message sending and receiving states.
+4. Implement progress indicators for long-running operations.
+5. Create toast notifications for important events.
+6. Add visual feedback for user actions (message sent, file uploaded).
+7. Implement transition animations between different application states.
+8. Create loading overlays for full-page operations when necessary.
+9. Add estimated time indicators for longer processes.
+10. Test all loading states and transitions for smoothness and user clarity.
+11. Ensure loading indicators are accessible with appropriate ARIA attributes.
+
+## 14. Implement User-Friendly Error Handling [pending]
+### Dependencies: 10.4
+### Description: Create a comprehensive error handling system with user-friendly error messages.
+### Details:
+1. Design a consistent error message format and styling.
+2. Implement error boundary components to catch and display React errors.
+3. Create custom error components for different error types (network, validation, etc.).
+4. Add retry functionality for failed operations.
+5. Implement offline detection and appropriate messaging.
+6. Create contextual error messages that suggest next steps.
+7. Add error logging for debugging purposes.
+8. Implement form validation with inline error messages.
+9. Create fallback UI components for when primary components fail.
+10. Test error handling with various error scenarios.
+11. Ensure error messages are accessible and properly announced to screen readers.
+
+## 15. Improve Responsive Design [pending]
+### Dependencies: 10.10, 10.11
+### Description: Enhance the mobile experience with a fully responsive, mobile-friendly interface.
+### Details:
+1. Audit current responsive behavior and identify improvement areas.
+2. Implement mobile-first design principles for all components.
+3. Create adaptive layouts for different screen sizes.
+4. Optimize touch targets for mobile users.
+5. Implement mobile-specific navigation patterns.
+6. Add swipe gestures for common actions where appropriate.
+7. Optimize file upload interface for mobile devices.
+8. Ensure proper virtual keyboard handling.
+9. Test on various mobile devices and screen sizes.
+10. Implement device-specific optimizations (iOS vs Android).
+11. Ensure consistent performance across all device types.
+
+## 16. Add Keyboard Shortcuts [pending]
+### Dependencies: 10.3
+### Description: Implement keyboard shortcuts for common actions to improve user efficiency.
+### Details:
+1. Implement Enter key to send messages (with modifier key for new line).
+2. Add Escape key functionality to cancel current operation.
+3. Create keyboard navigation for conversation history.
+4. Implement shortcut for starting a new conversation.
+5. Add keyboard accessibility for file upload (space/enter to open file dialog).
+6. Create a keyboard shortcut help modal.
+7. Implement copy shortcuts for message content.
+8. Add keyboard focus management for improved accessibility.
+9. Create custom key bindings for power users.
+10. Test keyboard shortcuts across different browsers and operating systems.
+11. Ensure shortcuts don't conflict with browser or system shortcuts.
+
+## 17. Implement Message Actions [pending]
+### Dependencies: 10.10
+### Description: Add functionality for message-specific actions like copy, regenerate responses, etc.
+### Details:
+1. Design and implement a message action menu UI.
+2. Add copy to clipboard functionality for message content.
+3. Implement regenerate response action for assistant messages.
+4. Add message editing capability for user messages.
+5. Implement message deletion with confirmation.
+6. Add code block actions (copy code, syntax highlighting).
+7. Create share message functionality.
+8. Implement message reaction/feedback options.
+9. Add message threading or reply functionality if applicable.
+10. Test all message actions for proper functionality.
+11. Ensure actions are accessible via keyboard and screen readers.
+
+## 18. Implement Dark/Light Theme Support [pending]
+### Dependencies: 10.2, 10.10
+### Description: Add theme switching functionality with dark and light modes using React Context API.
+### Details:
+1. Create a ThemeContext using React's Context API.
+2. Implement a ThemeProvider component that manages theme state.
+3. Add theme toggle functionality with smooth transitions.
+4. Configure Tailwind's dark mode using the 'class' strategy.
+5. Create theme-specific color variables for all UI elements.
+6. Implement local storage persistence for user theme preference.
+7. Add system preference detection for initial theme.
+8. Create a custom useTheme hook for components to access theme state.
+9. Update all components to respect theme settings.
+10. Test theme switching functionality across all components.
+11. Verify that theme persists across page refreshes.
+

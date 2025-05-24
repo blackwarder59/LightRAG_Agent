@@ -1,0 +1,23 @@
+# Task ID: 9
+# Title: Knowledge Base Management API
+# Status: pending
+# Dependencies: 7
+# Priority: medium
+# Description: Create API endpoints for managing multiple knowledge bases through LightRAG's directory-based approach.
+# Details:
+Implement a simplified approach leveraging LightRAG's directory-based knowledge base management:
+
+1. Create endpoints for working directory management to switch between LightRAG working directories
+2. Implement knowledge base metadata storage (names, descriptions, creation dates)
+3. Ensure proper directory isolation with separate lightrag_data folders for each knowledge base
+4. Expose basic statistics by leveraging LightRAG's built-in graph stats
+5. Implement import/export functionality using LightRAG's file persistence (directory content copying)
+
+Key endpoints to implement:
+- POST /api/knowledge-bases (create new KB)
+- GET /api/knowledge-bases (list all KBs)
+- PUT /api/knowledge-bases/{id}/activate (switch active KB)
+- GET /api/knowledge-bases/{id}/stats (graph statistics)
+
+# Test Strategy:
+Test knowledge base creation and listing functionality. Verify switching between knowledge bases works correctly by confirming the active directory changes. Test that each knowledge base maintains proper isolation. Verify statistics endpoints return accurate data from LightRAG. Test import/export by copying directory contents and ensuring all data is preserved.

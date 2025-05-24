@@ -1,0 +1,41 @@
+# Development overrides for easier development workflow
+services:
+  frontend:
+    build:
+      target: base
+    command: npm run dev
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_WS_URL=ws://localhost:8000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  backend:
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    environment:
+      - DEBUG=true
+      - LOG_LEVEL=DEBUG
+    volumes:
+      - ./backend:/app
+      - /app/__pycache__
+    env_file:
+      - .env
+
+  neo4j:
+    environment:
+      - NEO4J_AUTH=neo4j/lightragpassword123
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+
+  redis:
+    command: redis-server --requirepass lightragpassword123
+    ports:
+      - "6379:6379" 
