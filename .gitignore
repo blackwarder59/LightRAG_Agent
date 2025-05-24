@@ -157,4 +157,8 @@ jspm_packages/
 .fusebox/
 
 # TypeScript cache
-*.tsbuildinfo 
+*.tsbuildinfo
+
+# Python virtual environments
+.venv/
+lightrag_server_env/ 
